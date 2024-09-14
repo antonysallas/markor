@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!--
 /*#######################################################
  *
- *   Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+ *   Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
  *   License of this file: Apache 2.0
  *     https://www.apache.org/licenses/LICENSE-2.0
  *
@@ -40,6 +40,11 @@
     <PreferenceCategory android:title="@string/file_browser" />
 
     <Preference
+        android:icon="@drawable/ic_keyboard_return_black_24dp"
+        android:key="@string/pref_key__select_create_document"
+        android:title="@string/select_create_document" />
+
+    <Preference
         android:icon="@drawable/ic_star_black_24dp"
         android:key="@string/pref_key__favourite_files"
         android:title="@string/favourites" />
@@ -53,15 +58,6 @@
         android:icon="@drawable/ic_favorite_black_24dp"
         android:key="@string/pref_key__popular_documents"
         android:title="@string/popular_documents" />
-
-    <Preference
-        android:icon="@drawable/ic_keyboard_return_black_24dp"
-        android:key="@string/pref_key__share_into__existing_document"
-        android:title="@string/select_existing_document" />
-    <Preference
-        android:icon="@drawable/ic_add_white_24dp"
-        android:key="@string/pref_key__share_into__create_document"
-        android:title="@string/create_new_document" />
 
 
 </PreferenceScreen> <!-- Screen -->

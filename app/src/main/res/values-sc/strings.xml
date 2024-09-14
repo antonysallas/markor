@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
 
 To the extent possible under law, the person who associated CC0 with
 this file has waived all copyright and related or neighboring rights
@@ -27,7 +27,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="create_folder">Crea una cartella</string>
     <string name="create_new_document">Crea unu documentu nou</string>
     <string name="move">Move</string>
-    <string name="copy">Còpia</string>
     <string name="info">Informatziones</string>
     <string name="file_folder_already_exists_please_use_a_different_name">Su documentu/sa cartella esistit giai! Pro praghere imprea unu nùmene diferente</string>
     <string name="import_from_device">Importa dae su dispositivu</string>
@@ -60,6 +59,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="last_modified">Ùrtima modìfica</string>
     <string name="select_this_folder">Ischerta custa cartella</string>
     <string name="select">Ischerta</string>
+    <string name="select_all">Seletziona totu</string>
     <string name="create">Crea</string>
     <string name="select_entries">Ischerta sas intradas</string>
     <string name="one_item_selected">Un\'elementu ischertadu</string>
@@ -69,9 +69,11 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="name">Nùmene</string>
     <string name="url_or_path">URL / Àndala</string>
     <string name="insert_link">Inserta unu ligàmene</string>
+    <string name="format_link">Formata su ligàmene</string>
     <string name="insert_image">Inserta un\'immàgine</string>
     <string name="contributors">Contribuidores</string>
     <string name="save_location">Logu de sarvamentu</string>
+    <string name="saved_location_to">Sarvadu in %s</string>
     <string name="select_storage_folder">Ischerta sa cartella de archiviatzione</string>
     <string name="licenses">Litzèntzias</string>
     <string name="changelog">Registru de sas modìficas</string>
@@ -80,6 +82,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="show_third_party_licenses">Librerias de terzas partes</string>
     <string name="language_change_restart_description">Càmbia sa limba de custa aplicatzione. Torra·la a allùghere pro fàghere tènnere efetu a su cambiamentu</string>
     <string name="language">Limba</string>
+    <string name="storage_permission_required">Su permissu de archiviatzione est netzessàriu pro lèghere e iscrìere documentos</string>
     <string name="open_with">Aberi cun</string>
     <string name="sort_by">Òrdina pro</string>
     <string name="date">Data</string>
@@ -194,6 +197,10 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="unordered_list_char_asterisk">Asteriscu (*)</string>
     <string name="unordered_list_char_plus">Prus (+)</string>
     <string name="filemanager_doesnot_supply_required_data__appspecific">Markor podet editare petzi documentos locales e disponìbiles chene sa connessione a ìnternet e non suportat gestore de documentos chi non frunint s\'àndala intrea pro sos documentos.</string>
+    <string name="file_does_not_exist_and_cant_be_created">Su documentu o sa cartella no esistit e non si podet creare</string>
+    <string name="permissions">Permissos</string>
+    <string name="permission_paths_revert">Torrare a sas àndalas predefinidas?</string>
+    <string name="permission_not_granted">Permissu non cuntzessu</string>
     <string name="sync_to_local_folder_notice">Ammenta·ti: sas aplicatziones de sincronizatzione diant pòdere sarvare sos documentos in cartellas personalizadas. Aberi·los mudende sa cartella de sos documentos de Markor, o impreende un\'àteru gestore de documentos.</string>
     <string name="vertical_alignment">Alliniamentu verticale</string>
     <string name="horizontal_alignment">Alliniamentu orizontale</string>
@@ -209,11 +216,13 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="edit_text_in_center_of_screen">Èdita su testu in su tzentru de s\'ischermu</string>
     <string name="clipboard">Punta de billete</string>
     <string name="select_existing_document">Ischerta unu documentu esistente</string>
+    <string name="select_create_document">Seletziona o crea unu documentu</string>
     <string name="open_source_licenses">Litzèntzias a mitza aberta</string>
     <string name="rate_this_app">Vàluta custa aplicatzione</string>
     <string name="translate">Tradui</string>
     <string name="more_info_and_help">Àteras informatziones e agiudu</string>
     <string name="report_bugs">Sinnala errores</string>
+    <string name="do_you_have_a_question_or_problem">Tenes una dimanda o unu problema?</string>
     <string name="join_community">Auni·ti a sa comunidade</string>
     <string name="bug_reports_suggest_improvements">Lassa·nos s\'opinione tua, sinnala faddinas o cussìgia megiorias</string>
     <string name="help_translating_this_app">Borta custa aplicatzione in àteras limbas</string>
@@ -308,8 +317,9 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="list_in_recent_files">Allista in sos documentos reghentes</string>
     <string name="reload">Torra a carrigare</string>
     <string name="wrap_words">Acontzu de sas lìnias</string>
+    <string name="line_numbers">Nùmeros de lìnia</string>
     <string name="soft_break_if_not_fit_to_width_else_enable_horizontal_scrolling">Mandat a suta su testu si cussu barigat sa mannària de s\'ischermu. Si nono abìlitat s\'iscurrimentu orizontale.</string>
-    <string name="recursive_search_in_current_directory">Chirca ricursiva in sa cartella atuale.</string>
+    <string name="recursive_search_in_location">Chirca ricursiva in %s</string>
     <string name="always_open_with_this_app">Aberi semper cun custa aplicatzione</string>
     <string name="always_open_files_with_this_app_when_list_contains_file_extension">Aberi semper sos documentos cun custa aplicatzione cando sa lista cuntenet s\'estensione de su documentu. Imprea \'Peruna, .html, .css , .js\' a esèmpiu si cheres modificare documentos web e cussos chene estensione.</string>
     <string name="open_file_with">Aberi su documentu cun</string>
@@ -332,6 +342,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="how_much_columns_press_table_button_long_to_start_table">Cantas colonnas? Incarca su butone de sa tabella a longu pro creare una tabella (insertare s\'intestatzione), pro pagu pro annànghere una riga.</string>
     <string name="example_of_a_markdown_table">Esèmpiu de una tabella Markdown</string>
     <string name="delete_lines">Iscantzella sas rigas</string>
+    <string name="duplicate_lines">Lìnias duplicadas</string>
     <string name="unordered_list">Lista disordinada</string>
     <string name="ordered_list">Lista ordinada</string>
     <string name="check_list">Lista de verìfica</string>
@@ -360,6 +371,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="archive_completed_tasks">Archìvia sas fainas acabadas</string>
     <string name="create_new_file_or_folder">Crea unu documentu o una cartella noa</string>
     <string name="choose_format">Issèbera su formadu</string>
+    <string name="clear_selection">Isbòida sa seletzione</string>
     <string name="selected">Ischertados</string>
     <string name="back">In palas</string>
     <string name="expand_collapse">Ismànnia / Mìnima</string>
@@ -434,10 +446,14 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="search_dynamically_for_notebook_root">Pro sighire sos ligàmenes wiki chirca in manera dinàmica su documentu notebook.zim pro identificare sa cartella de raighina pro sas notas atuales. Marca·lu si impreas prus blocos de notas zim o si sa cartella de su blocu de notas impostada in s\'aplicatzione non currispondet a su blocu de notas zim tuo.</string>
     <string name="share_into_format_prefix_for_text_shared">Formadu/Prefissu pro su testu cumpartzidu in Markor. Sighit sas règulas SimpleDateFormat de Android.\n\nImprea su sinnapostu {{text}} pro pònnere in logu su testu cumpartzidu. Si no est dislindadu su testu cumpartzidu benit postu in fundu e su formadu s\'impreat comente prefissu.</string>
     <string name="share_into_format">Cumpartzi in - Formadu</string>
+    <string name="attachment_folder_name">Nùmene de sa cartella de sos alligados</string>
+    <string name="attachment_folder_name_desc">Suta-cartella suta de sa cartella atuale in ue s\'anta a sarvare sos alligados. Si abarrat bòidu, sos alligados s\'ant a sarvare in sa cartella atuale.</string>
     <string name="auto_format">Formatatzione automàtica</string>
     <string name="insert_snippet">Inserta frammentu</string>
+    <string name="snippet_directory">Cartella pro frammentos / modellos</string>
     <string name="error_could_not_open_file">Errore: No at fatu a abèrrere su documentu.</string>
     <string name="document_error_clip">Errore agatadu: testu copiadu in punta de billete.</string>
     <string name="wont_save_min_length">Documentos cun prus pagu de %d caràteres non benint sarvados in automàticu pro prevenire pèrdidas de datos.</string>
     <string name="advanced_filtering_help"><![CDATA[<small><a href="https://www.github.com/gsantner/markor/discussions/1940">Sintassi de filtràgiu avantzada</a></small>]]></string>
+    <string name="filter">Filtru</string>
 </resources>

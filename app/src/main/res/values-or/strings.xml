@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
 
 To the extent possible under law, the person who associated CC0 with
 this file has waived all copyright and related or neighboring rights
@@ -10,7 +10,7 @@ You should have received a copy of the CC0 legalcode along with this
 work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="settings">ସେଟିଂସମୂହ</string>
+    <string name="settings">ସେଟିଂ</string>
     <string name="light">ହାଲୁକା</string>
     <string name="dark">ଗାଢ଼</string>
     <string name="delete">ବିଲୋପ କରନ୍ତୁ</string>
@@ -27,7 +27,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="create_folder">ଫୋଲ୍ଡର୍ ସୃଷ୍ଟି କରନ୍ତୁ</string>
     <string name="create_new_document">ନୂତନ ଡକ୍ୟୁମେଣ୍ଟ୍ ସୃଷ୍ଟି କରନ୍ତୁ</string>
     <string name="move">ଘୁଞ୍ଚାନ୍ତୁ</string>
-    <string name="copy">କପି କରନ୍ତୁ</string>
     <string name="info">ସୂଚନା</string>
     <string name="file_folder_already_exists_please_use_a_different_name">ଫାଇଲ୍/ଫୋଲ୍ଡର୍ ପୂର୍ବରୁ ବିଦ୍ୟମାନ ଅଛି! ଦୟାକରି ଏକ ଭିନ୍ନ ନାମ ବ୍ୟବହାର କରନ୍ତୁ</string>
     <string name="import_from_device">ଡିଭାଇସରୁ ଆମଦାନୀ କରନ୍ତୁ</string>
@@ -50,6 +49,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="image">ପ୍ରତିଛବି</string>
     <string name="font_size">ଫଣ୍ଟ ଆକାର</string>
     <string name="last_modified_witharg">ଶେଷ ସଂଶୋଧିତ: %s</string>
+    <string name="last_modified">ଶେଷ ସଂଶୋଧିତ</string>
     <string name="select_this_folder">ଏହି ଫୋଲ୍ଡର୍ ଚୟନ କରନ୍ତୁ</string>
     <string name="select">ଚୟନ କରନ୍ତୁ</string>
     <string name="create">ସୃଷ୍ଟି କରନ୍ତୁ</string>
@@ -59,7 +59,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="hide_statusbar">ସ୍ଥିତି ଦଣ୍ଡିକା ଲୁଚାଅ</string>
     <string name="name">ନାମ</string>
     <string name="url_or_path">URL / ପଥ</string>
-    <string name="insert_link">ଲିଙ୍କ୍ ସନ୍ନିବେଶ କରନ୍ତୁ</string>
     <string name="insert_image">ପ୍ରତିଛବି ସନ୍ନିବେଶ କରନ୍ତୁ</string>
     <string name="contributors">ଯୋଗଦାନକାରୀ</string>
     <string name="select_storage_folder">ଷ୍ଟୋରେଜ୍ ଫୋଲ୍ଡର୍ ଚୟନ କରନ୍ତୁ</string>
@@ -191,6 +190,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="folder_first">ପ୍ରଥମେ ଫୋଲ୍ଡର୍</string>
     <string name="internal_storage">ଅନ୍ତର୍ନିହିତ ଷ୍ଟୋରେଜ୍‌</string>
     <string name="open_the_document_from_main_view">ଆପଣ ତଳେଥିବା ମୁଖ୍ୟ ଦର୍ଶନ, ଫାଇଲ୍ ବ୍ରାଉଜର୍ କିମ୍ୱା ଉନ୍ମୋଚକ ରୁ ଡକ୍ୟୁମେଣ୍ଟ୍ ଖୋଲିପାରିବେ। Markorରେ ଅଂଶିଦାରୀ ପାଠ୍ୟ ଯୋଡ଼ିବାର ଏକ ବିକଳ୍ପ ମଧ୍ୟ ଅଛି।</string>
+    <string name="navigationbar_color">ଦିଗଚଳନ ଦଣ୍ଡିକା ରଙ୍ଗ</string>
     <string name="black">କଳା</string>
     <string name="white">ଧଳା</string>
     <string name="view">ଦର୍ଶନ</string>

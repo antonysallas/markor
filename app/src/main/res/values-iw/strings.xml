@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
 
 To the extent possible under law, the person who associated CC0 with
 this file has waived all copyright and related or neighboring rights
@@ -27,7 +27,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="create_folder">צור תיקייה</string>
     <string name="create_new_document">צור מסמך חדש</string>
     <string name="move">הזז</string>
-    <string name="copy">להעתיק</string>
     <string name="info">מידע</string>
     <string name="file_folder_already_exists_please_use_a_different_name">הקובץ/תיקיה כבר קיים! נא לבחור שם אחר</string>
     <string name="import_from_device">ייבא מהמכשיר</string>
@@ -57,7 +56,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="render_rtl_language">תייצג עבור שפות ימין-לשמאל</string>
     <string name="error_cannot_create_notebook_dir__appspecific">שגיאה: לא ניתן ליצור תיקיה</string>
     <string name="last_modified_witharg">עדכון אחרון: %s</string>
-    <string name="last_modified">Last updated</string>
+    <string name="last_modified">עדכון אחרון</string>
     <string name="select_this_folder">בחר תיקיה זו</string>
     <string name="select">בחר</string>
     <string name="create">צור</string>
@@ -68,7 +67,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="hide_statusbar">הסתר את סרגל המצב</string>
     <string name="name">שם</string>
     <string name="url_or_path">קישור לרשת / נתיב קובץ</string>
-    <string name="insert_link">הכנס קישור</string>
     <string name="insert_image">הכנס תמונה</string>
     <string name="contributors">תורמים</string>
     <string name="save_location">שמור מיקום</string>
@@ -304,7 +302,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="reload">טען מחדש</string>
     <string name="wrap_words">גלישת שורות</string>
     <string name="soft_break_if_not_fit_to_width_else_enable_horizontal_scrolling">שבירת שורות במקרה של טקטס רחב מהמסך. אחרת אפשר גלילה אופקית.</string>
-    <string name="recursive_search_in_current_directory">חיפוש ריקורסיבי בתיקיה נוכחית.</string>
     <string name="always_open_with_this_app">פתח תמיד עם אפליקציה זו</string>
     <string name="always_open_files_with_this_app_when_list_contains_file_extension">תמיד פתח קבצים באפליקציה זו כאשר הרשימה מכילה את סיומת הקובץ. השתמשו לדוגמא ב \'None, .html, .css , .js\' אם ברצונכם לערוך קבצי web וכאלו ללא סיומת.</string>
     <string name="rotate">לסובב</string>
@@ -366,7 +363,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="created">נוצר</string>
     <string name="file_encryption_password">סיסמה להצפנת קבצים</string>
     <string name="no_password_set_cannot_encrypt_decrypt">לא הוגדרה סיסמא, לא ניתן להצפין/לפענח.
-גש להגדרות -> כללי -> סיסמא
+גש להגדרות -&gt; כללי -&gt; סיסמא
 בכדי להגדיר סיסמא.</string>
     <string name="encrypt_file_content">הצפן קובץ</string>
     <string name="utf8_with_bom">UTF-8 עם BOM</string>

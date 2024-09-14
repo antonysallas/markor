@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
 
 To the extent possible under law, the person who associated CC0 with
 this file has waived all copyright and related or neighboring rights
@@ -27,7 +27,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="create_folder">Utwórz folder</string>
     <string name="create_new_document">Utwórz nowy dokument</string>
     <string name="move">Przenieś</string>
-    <string name="copy">Kopiuj</string>
     <string name="info">Informacje</string>
     <string name="file_folder_already_exists_please_use_a_different_name">Plik/katalog już istnieje! Proszę użyć innej nazwy</string>
     <string name="import_from_device">Importuj z urządzenia</string>
@@ -57,7 +56,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="render_rtl_language">Renderowanie dla języków od prawej do lewej</string>
     <string name="error_cannot_create_notebook_dir__appspecific">Błąd: Nie można utworzyć katalogu Notatek</string>
     <string name="last_modified_witharg">Ostatnio zmodyfikowano: %s</string>
-    <string name="last_modified">Ostatnio zmodyfikowane</string>
+    <string name="last_modified">Ostatnio zmodyfikowano</string>
     <string name="select_this_folder">Wybierz ten folder</string>
     <string name="select">Wybierz</string>
     <string name="create">Stwórz</string>
@@ -68,10 +67,10 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="hide_statusbar">Ukryj pasek stanu</string>
     <string name="name">Nazwa</string>
     <string name="url_or_path">URL / Ścieżka</string>
-    <string name="insert_link">Wstaw link</string>
     <string name="insert_image">Wstaw obrazek</string>
     <string name="contributors">Współautorzy</string>
     <string name="save_location">Zapisz lokalizację</string>
+    <string name="saved_location_to">Zapisano do %s</string>
     <string name="select_storage_folder">Wybierz folder zapisu</string>
     <string name="licenses">Licencje</string>
     <string name="changelog">Lista zmian</string>
@@ -80,6 +79,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="show_third_party_licenses">Pokaż licencje dzieł osób trzecich</string>
     <string name="language_change_restart_description">Zmień język aplikacji. Uruchom ponownie aplikację, aby zobaczyć zmiany</string>
     <string name="language">Język</string>
+    <string name="storage_permission_required">Wymagany dostęp do odczytu i zapisu plików</string>
     <string name="open_with">Otwórz za pomocą</string>
     <string name="sort_by">Sortuj</string>
     <string name="date">Sortuj według daty</string>
@@ -308,7 +308,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="reload">Przeładuj</string>
     <string name="wrap_words">Zawijanie słów</string>
     <string name="soft_break_if_not_fit_to_width_else_enable_horizontal_scrolling">Miękka przerwa, jeśli tekst nie pasuje do szerokości ekranu. W przeciwnym razie włącz przewijanie poziome.</string>
-    <string name="recursive_search_in_current_directory">Wyszukiwanie rekursywne w bieżącym katalogu.</string>
     <string name="always_open_with_this_app">Zawsze otwieraj za pomocą tej aplikacji</string>
     <string name="always_open_files_with_this_app_when_list_contains_file_extension">Zawsze otwieraj pliki o wybranych rozszerzeniach w tej aplikacji. Przykładowo, użyj \'None, .html, .css , .js\', jeśli chcesz edytować pliki internetowe i te bez rozszerzenia pliku.</string>
     <string name="open_file_with">Otwórz plik z</string>

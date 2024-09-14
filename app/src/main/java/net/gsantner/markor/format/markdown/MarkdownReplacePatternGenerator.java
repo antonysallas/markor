@@ -1,6 +1,6 @@
 /*#######################################################
  *
- *   Maintained 2018-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+ *   Maintained 2018-2024 by Gregor Santner <gsantner AT mailbox DOT org>
  *   License of this file: Apache 2.0
  *     https://www.apache.org/licenses/LICENSE-2.0
  *
@@ -10,7 +10,7 @@ package net.gsantner.markor.format.markdown;
 import net.gsantner.markor.format.ActionButtonBase;
 import net.gsantner.markor.frontend.textview.AutoTextFormatter;
 import net.gsantner.markor.frontend.textview.ReplacePatternGeneratorHelper;
-import net.gsantner.markor.frontend.textview.TextViewUtils;
+import net.gsantner.opoc.format.GsTextUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +63,7 @@ public class MarkdownReplacePatternGenerator {
 
         List<ActionButtonBase.ReplacePattern> patterns = new ArrayList<>();
 
-        String heading = TextViewUtils.repeatChars('#', level);
+        String heading = GsTextUtils.repeatChars('#', level);
 
         // Replace this exact heading level with nothing
         patterns.add(new ActionButtonBase.ReplacePattern("^(\\s{0,3})" + heading + " ", "$1"));

@@ -1,7 +1,7 @@
 /*#######################################################
  * Copyright (c) 2014 Jeff Martin
  * Copyright (c) 2015 Pedro Lafuente
- * Copyright (c) 2017-2023 Gregor Santner
+ * Copyright (c) 2017-2024 Gregor Santner
  *
  * Licensed under the MIT license.
  * You can get a copy of the license text here:
@@ -67,7 +67,13 @@ public class WrWidgetConfigure extends MarkorBaseActivity {
                 dopt.titleText = R.string.select_folder;
                 dopt.rootFolder = ApplicationObject.settings().getNotebookDirectory();
             }
-        }, fragManager, this);
+
+            @Override
+            public void onFsViewerCancel(final String request) {
+                finish();
+            }
+
+        }, getSupportFragmentManager(), this);
     }
 
     public static File getWidgetDirectory(final Context context, int id) {

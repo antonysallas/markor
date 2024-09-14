@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
 
 To the extent possible under law, the person who associated CC0 with
 this file has waived all copyright and related or neighboring rights
@@ -27,7 +27,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="create_folder">Nouveau dossier</string>
     <string name="create_new_document">Créer un nouveau document</string>
     <string name="move">Déplacer</string>
-    <string name="copy">Copie</string>
     <string name="info">Info</string>
     <string name="file_folder_already_exists_please_use_a_different_name">Le fichier/dossier existe déjà ! Veuillez utiliser un nom différent</string>
     <string name="import_from_device">Importer depuis cet appareil</string>
@@ -57,9 +56,10 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="render_rtl_language">Activer le support des langues écrites de droite à gauche</string>
     <string name="error_cannot_create_notebook_dir__appspecific">Erreur : impossible de créer le dossier du bloc note</string>
     <string name="last_modified_witharg">Dernière modification : %s</string>
-    <string name="last_modified">Dernière modification</string>
+    <string name="last_modified">Dernière modification </string>
     <string name="select_this_folder">Sélectionner ce dossier</string>
     <string name="select">Sélectionner</string>
+    <string name="select_all">Tout sélectionner</string>
     <string name="create">Créer</string>
     <string name="select_entries">Sélectionnez une ou plusieurs entrées</string>
     <string name="one_item_selected">Une entrée sélectionnée</string>
@@ -68,10 +68,10 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="hide_statusbar">Cacher la barre de statut</string>
     <string name="name">Nom</string>
     <string name="url_or_path">URL / Chemin</string>
-    <string name="insert_link">Insérer lien</string>
     <string name="insert_image">Insérer image</string>
     <string name="contributors">Contributeurs</string>
     <string name="save_location">Enregistrer la localisation</string>
+    <string name="saved_location_to">Enregistré dans %s</string>
     <string name="select_storage_folder">Sélectionnez le dossier à utiliser pour l\'enregistrement</string>
     <string name="licenses">Licences</string>
     <string name="changelog">Nouveautés</string>
@@ -80,6 +80,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="show_third_party_licenses">Montrer les licences tierces</string>
     <string name="language_change_restart_description">Change la langue de l\'application. Redémarrez l\'application pour que les changements prennent effet</string>
     <string name="language">Langue</string>
+    <string name="storage_permission_required">L\'autorisation de stockage est nécessaire pour lire et écrire les fichiers</string>
     <string name="open_with">Ouvrir avec</string>
     <string name="sort_by">Trier</string>
     <string name="date">Trier par date</string>
@@ -174,6 +175,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="archive_does_move_done_tasks">Déplacer vers un fichier du dossier</string>
     <string name="sort_tasks_by_selected_order">Ordonnez les tâches selon l\'ordre sélectionné</string>
     <string name="special_key">Touches spéciales</string>
+    <string name="asciidoc_special_key">Contenu spécial AsciiDoc</string>
     <string name="key_page_up">Page précédente</string>
     <string name="key_page_down">Page suivante</string>
     <string name="move_text_one_line_up">Déplacer le texte une ligne vers le haut</string>
@@ -193,6 +195,10 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="unordered_list_char_asterisk">Asterisk (*)</string>
     <string name="unordered_list_char_plus">Plus (+)</string>
     <string name="filemanager_doesnot_supply_required_data__appspecific">Markor ne peut éditer que des fichiers locaux, disponibles hors connexion, et ne supporte pas les gestionnaires de fichiers qui ne fournissent pas le chemin d’accès complet du fichier.</string>
+    <string name="file_does_not_exist_and_cant_be_created">Le fichier ou le dossier n\'existe pas et ne peut pas être créé</string>
+    <string name="permissions">Permissions</string>
+    <string name="permission_paths_revert">Rétablir les chemins de fichiers par défaut ?</string>
+    <string name="permission_not_granted">Permission non accordée</string>
     <string name="sync_to_local_folder_notice">Remarque : Les applications de synchronisation peuvent placer des fichiers dans des dossiers personnalisés. Ouvrez-les en modifiant le dossier de document de Markor en conséquence, ou dans un autre gestionnaire de fichiers.</string>
     <string name="vertical_alignment">Alignement vertical</string>
     <string name="horizontal_alignment">Alignement horizontal</string>
@@ -208,11 +214,13 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="edit_text_in_center_of_screen">Éditer le texte au centre de l\'écran</string>
     <string name="clipboard">Presse-papier</string>
     <string name="select_existing_document">Sélectionner un document existant</string>
+    <string name="select_create_document">Choisir ou créer un document</string>
     <string name="open_source_licenses">Licence Open Source</string>
     <string name="rate_this_app">Évaluer cette application</string>
     <string name="translate">Traduire</string>
     <string name="more_info_and_help">Plus d\'informations et d\'aide sur cette application</string>
     <string name="report_bugs">Signaler un bug</string>
+    <string name="do_you_have_a_question_or_problem">Une question ou un problème ?</string>
     <string name="join_community">Rejoindre la communauté</string>
     <string name="bug_reports_suggest_improvements">Commentaires et suggestions</string>
     <string name="help_translating_this_app">Traduire cette application</string>
@@ -261,7 +269,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="keep_existing_file">- Les fichiers et dossiers ne seront pas écrasés ou remplacés</string>
     <string name="multiple_windows">Fenêtres multiples</string>
     <string name="font">Police</string>
-    <string name="open_new_documents_always_in_new_window">Toujours ouvrir les documents dans une fenêtre séparée. Changez de document en utilisant la clé des fenêtres récentes de votre appareil.</string>
+    <string name="open_new_documents_always_in_new_window">Toujours ouvrir les documents dans une fenêtre séparée. Changez de document en utilisant la touche des fenêtres récentes de votre appareil.</string>
     <string name="enter_or_select_format">Entrez le format manuellement ou sélectionnez le format</string>
     <string name="pick_date">Choisissez une date</string>
     <string name="pick_time">Choisissez l\'heure</string>
@@ -307,8 +315,9 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="list_in_recent_files">Lister dans les fichiers récents</string>
     <string name="reload">Rafraîchir</string>
     <string name="wrap_words">Retour à la ligne</string>
+    <string name="line_numbers">Numéro de la ligne</string>
     <string name="soft_break_if_not_fit_to_width_else_enable_horizontal_scrolling">Afficher la suite du texte à la ligne suivante s\'il dépasse la largeur de l\'écran, plutôt que d\'utiliser le défilement horizontal.</string>
-    <string name="recursive_search_in_current_directory">Recherche récursive dans le répertoire courant.</string>
+    <string name="recursive_search_in_location">Recherche récursive dans %s</string>
     <string name="always_open_with_this_app">Toujours ouvrir avec cette application</string>
     <string name="always_open_files_with_this_app_when_list_contains_file_extension">Toujours ouvrir avec cette application les fichiers dont l\'extension est contenue dans la liste. Utilisez \'None\', \'.html\', \'.css\', \'.js\' par exemple si vous voulez éditer des fichiers web ainsi que les fichiers sans extension.</string>
     <string name="open_file_with">Ouvrir le fichier avec</string>
@@ -331,6 +340,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="how_much_columns_press_table_button_long_to_start_table">Combien de colonnes ? Appuyez sur le bouton du tableau pour démarrer une table (entête d\'insertion), appuyez sur court pour ajouter une ligne.</string>
     <string name="example_of_a_markdown_table">Exemple de tableau Markdown</string>
     <string name="delete_lines">Supprimer les lignes</string>
+    <string name="duplicate_lines">Dupliquer les lignes</string>
     <string name="unordered_list">Liste non ordonnée</string>
     <string name="ordered_list">Liste ordonnée</string>
     <string name="check_list">Liste de contrôle</string>
@@ -359,6 +369,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="archive_completed_tasks">Archiver les tâches terminées</string>
     <string name="create_new_file_or_folder">Créer un nouveau fichier ou dossier</string>
     <string name="choose_format">Choisir le format</string>
+    <string name="clear_selection">Effacer la sélection</string>
     <string name="selected">Sélectionné</string>
     <string name="back">Retour</string>
     <string name="expand_collapse">Développer / Réduire</string>
@@ -431,9 +442,16 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="match_all">Tout faire correspondre</string>
     <string name="dynamic_notebook_root_links">Recherche dynamique de la racine du bloc-notes</string>
     <string name="search_dynamically_for_notebook_root">Afin de suivre les liens du wiki, recherchez dynamiquement le fichier notebook.zim pour identifier le répertoire racine du cahier actuel. Cochez cette case si vous utilisez plusieurs blocs-notes zim ou si le répertoire de bloc-notes défini dans l\'application ne correspond pas à votre bloc-notes zim.</string>
+    <string name="share_into_format_prefix_for_text_shared">Format/Préfixe des textes partagés dans Markor. Suis les règles de format de dates simplifiées d\'Android.\n\nUtiliser le texte réservé {{text}} pour positionner le texte partagé. S\'il n\'est pas spécifié, le texte partagé sera annexés et le format utilisé comme préfixe.</string>
     <string name="share_into_format">Partager dans - Format</string>
+    <string name="attachment_folder_name">Nom du dossier en attachement</string>
+    <string name="attachment_folder_name_desc">Les sous-dossiers du dossier actuel où les pièces-jointes seront sauvegarder. Si laissé blanc, les pièces jointes seront sauvegardé dans le dossier actuel.</string>
     <string name="auto_format">Format automatique</string>
     <string name="insert_snippet">Insert snippet</string>
+    <string name="snippet_directory">Dossier de modèles</string>
     <string name="error_could_not_open_file">Impossible d\'ouvrir le fichier.</string>
     <string name="document_error_clip">Erreur rencontrée: Texte copié dans le presse-papiers.</string>
+    <string name="wont_save_min_length">Les fichiers avec moins de %d caractères ne seront pas automatiquement sauvegardé afin d\'éviter les pertes de données.</string>
+    <string name="advanced_filtering_help"><![CDATA[<small><a href="https://www.github.com/gsantner/markor/discussions/1940">Filtres syntaxiques avancés</a></small>]]></string>
+    <string name="filter">Filtrer</string>
 </resources>

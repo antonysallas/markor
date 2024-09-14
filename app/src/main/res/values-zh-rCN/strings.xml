@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
 
 To the extent possible under law, the person who associated CC0 with
 this file has waived all copyright and related or neighboring rights
@@ -27,7 +27,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="create_folder">新建文件夹</string>
     <string name="create_new_document">新建文档</string>
     <string name="move">移动</string>
-    <string name="copy">复制</string>
     <string name="info">信息</string>
     <string name="file_folder_already_exists_please_use_a_different_name">已存在同名文件/文件夹！请换一个名字试试。</string>
     <string name="import_from_device">从本设备导入</string>
@@ -60,6 +59,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="last_modified">最后修改</string>
     <string name="select_this_folder">选择这个文件夹</string>
     <string name="select">选择</string>
+    <string name="select_all">全选</string>
     <string name="create">新建</string>
     <string name="select_entries">选择 输入文字</string>
     <string name="one_item_selected">已选中一项</string>
@@ -69,9 +69,11 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="name">名称</string>
     <string name="url_or_path">URL / 路径</string>
     <string name="insert_link">插入链接</string>
+    <string name="format_link">格式化链接</string>
     <string name="insert_image">插入图片</string>
     <string name="contributors">贡献者</string>
     <string name="save_location">保存位置</string>
+    <string name="saved_location_to">已保存到 %s</string>
     <string name="select_storage_folder">选择存储文件夹</string>
     <string name="licenses">开源协议</string>
     <string name="changelog">更新日志​​​​​</string>
@@ -80,6 +82,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="show_third_party_licenses">显示第三方许可</string>
     <string name="language_change_restart_description">更改语言（重启应用后生效）</string>
     <string name="language">语言</string>
+    <string name="storage_permission_required">需要存储权限读写文件</string>
     <string name="open_with">打开方式</string>
     <string name="sort_by">排序方式</string>
     <string name="date">日期</string>
@@ -125,7 +128,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="create_note" needed="false">新建笔记</string>
     <string name="special_documents" needed="false">特殊文件</string>
     <string name="keep_screen_on" needed="false">保持屏幕开启</string>
-    <string name="disallow_screenshots">不允许截屏</string>
+    <string name="disallow_screenshots">禁止截屏</string>
     <string name="back_to_previous_folder" needed="false">返回上一个文件夹</string>
     <string name="app_settings" needed="false">应用设置</string>
     <string name="editor_settings" needed="false">编辑器设置</string>
@@ -140,7 +143,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="highlighting_delay">语法高亮延时</string>
     <string name="highlighting_delay_lower_value_more_battery_drain_description__appspecific">刷新高亮的延迟时间（以毫秒为单位）。 较低的值将更早开始高亮，但它会耗尽您的电池，并可能拖慢旧设备上的应用程序速度。</string>
     <string name="highlighting_enabled_or_not__appspecific">控制是否应突出显示输入的文本</string>
-    <string name="dynamic_highlighting_effect">动态高亮增加性能。可能会导致渲染伪影。</string>
+    <string name="dynamic_highlighting_effect">动态高亮增加性能，可能导致伪影。</string>
     <string name="control_font_size_in_editor">调整编辑器中文字的字体大小</string>
     <string name="textactions_show_useful_actions_description__appspecific">在底部显示一排快捷按钮。这些文本操作按钮可以修改文字或着对文字进行其他操作。</string>
     <string name="load_last_opened_folder_at_startup">启动时加载上次打开的目录</string>
@@ -194,6 +197,10 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="unordered_list_char_asterisk">星号 (*)</string>
     <string name="unordered_list_char_plus">加号 (+)</string>
     <string name="filemanager_doesnot_supply_required_data__appspecific">Markor 只能编辑本地、离线可用的文档，且不支持不提供完整文件路径的文件管理器。</string>
+    <string name="file_does_not_exist_and_cant_be_created">文件或目录不存在且无法创建</string>
+    <string name="permissions">权限</string>
+    <string name="permission_paths_revert">恢复为默认路径？</string>
+    <string name="permission_not_granted">未授予权限</string>
     <string name="sync_to_local_folder_notice">注意：同步应用可能会将文件放置在自定义文件夹中，请相应地更改 Markor 的文档文件夹或在另一个文件管理器中打开它们。</string>
     <string name="vertical_alignment">垂直对齐</string>
     <string name="horizontal_alignment">水平对齐</string>
@@ -203,17 +210,19 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="top">顶端</string>
     <string name="bottom">底端</string>
     <string name="center">居中</string>
-    <string name="actionbutton_spacing">ActionButton 间距</string>
-    <string name="horizontal_space_between_actionbuttons">ActionButton 之间的水平间距</string>
+    <string name="actionbutton_spacing">快捷键间距</string>
+    <string name="horizontal_space_between_actionbuttons">快捷键之间的水平间距</string>
     <string name="center_text">居中文字</string>
     <string name="edit_text_in_center_of_screen">在屏幕中央编辑文本</string>
     <string name="clipboard">剪切板</string>
     <string name="select_existing_document">选择已有文档</string>
+    <string name="select_create_document">选择或创建文档</string>
     <string name="open_source_licenses">开源协议</string>
     <string name="rate_this_app">评价本应用</string>
     <string name="translate">翻译</string>
     <string name="more_info_and_help">更多信息与帮助</string>
     <string name="report_bugs">报告 bug</string>
+    <string name="do_you_have_a_question_or_problem">存在疑问或问题吗？</string>
     <string name="join_community">加入社区</string>
     <string name="bug_reports_suggest_improvements">给出反馈，报告问题，或提出改进建议</string>
     <string name="help_translating_this_app">翻译本应用</string>
@@ -242,7 +251,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="description">描述</string>
     <string name="edit_picture">编辑图片</string>
     <string name="math">启用数学公式渲染</string>
-    <string name="enter_yaml_front_matter_attributes_to_show">在已浏览文档的顶部显示输入的 YAML 前置属性。输入密钥以逗号分隔。留空则不留空，或者全部使用“*”。 \n\n如果文档中定义了任何属性 (即) title: \'你好\', 你的文档有 {{ post.title }} 也被替换。你可以制作一个自定义的前台来向这个方向前进。</string>
+    <string name="enter_yaml_front_matter_attributes_to_show">在已浏览文档的顶部显示输入的 YAML Front Matter 属性。以逗号分隔输入的关键词。留空表示无或使用 \'*\' 表示所有。\n\n在文档中如果定义了任何属性 (例如 title: \'Hello\')，并且你的文档中也含有 {{ post.title }}，那么该属性将被替换。你可以使用以上方式自定义 Front Matter 标题。</string>
     <string name="table_of_contents">目录</string>
     <string name="miscellaneous">杂项设置</string>
     <string name="prefer_view">首选视图</string>
@@ -288,7 +297,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="open_the_document_from_main_view">您可以从底部主视图、文件浏览器或启动器打开文档。还有一个选项可以附加分享到 Markor 的文本。</string>
     <string name="notebook_is_the_home_of_your_files">笔记本是程序启动时 Markor 在文件浏览器中加载的文件夹。它是你的文件的主文件夹。</string>
     <string name="quicknote_is_the_fastest_option_to_write_down_notes">QuickNote 是写下笔记最快选择。它是一个默认位置为 &gt;Notebook/QuickNote.md&lt; 的 Markdown 格式的文件，您可以在设置中设置一个自定义文件路径。</string>
-    <string name="todo_is_the_easiest_way_">使用 ToDo管理您的任务。它是 todo.txt 格式的文件，默认位置 &gt;Notebook/todo。 xt&lt;，您可以在设置中设置自定义文件路径。</string>
+    <string name="todo_is_the_easiest_way_">使用 ToDo 管理你的任务。它是 todo.txt 格式的文件，默认位置是 &gt;Notebook/todo.txt&lt;，你可以在设置中自定义文件路径。</string>
     <string name="navigationbar_color">导航栏颜色</string>
     <string name="black">黑色</string>
     <string name="white">白色</string>
@@ -308,10 +317,11 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="list_in_recent_files">最近文件列表</string>
     <string name="reload">刷新</string>
     <string name="wrap_words">折行</string>
+    <string name="line_numbers">行号</string>
     <string name="soft_break_if_not_fit_to_width_else_enable_horizontal_scrolling">如果文字不适合屏幕宽度则软打断。否则启用横向滚动。</string>
-    <string name="recursive_search_in_current_directory">在当前目录中进行递归搜索。</string>
+    <string name="recursive_search_in_location">在%s中递归搜索</string>
     <string name="always_open_with_this_app">总是使用本应用打开</string>
-    <string name="always_open_files_with_this_app_when_list_contains_file_extension">当列表包含文件扩展名时总是使用此应用打开文件。例如如果您想编辑网页文件和无扩展名文件，请使用 \'None, .html, .css , .js\'。</string>
+    <string name="always_open_files_with_this_app_when_list_contains_file_extension">总是使用本应用打开此列表包含的文件扩展名的文件，例如如果你想编辑网页文件和无扩展名的文件，请使用 \'None, .html, .css , .js\'。</string>
     <string name="open_file_with">打开文件</string>
     <string name="rotate">旋转</string>
     <string name="template">模板</string>
@@ -332,6 +342,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="how_much_columns_press_table_button_long_to_start_table">需要多少列？长按表格按钮来新建一个表格 (插入表头) ，短按以添加一行。</string>
     <string name="example_of_a_markdown_table">Markdown 表格示例</string>
     <string name="delete_lines">删除行</string>
+    <string name="duplicate_lines">复制行</string>
     <string name="unordered_list">无序列表</string>
     <string name="ordered_list">有序列表</string>
     <string name="check_list">复选列表</string>
@@ -360,6 +371,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="archive_completed_tasks">存档已完成的任务</string>
     <string name="create_new_file_or_folder">创建一个新的文件或文件夹</string>
     <string name="choose_format">选择格式</string>
+    <string name="clear_selection">清除选项</string>
     <string name="selected">已选择</string>
     <string name="back">后退</string>
     <string name="expand_collapse">展开/收起</string>
@@ -373,7 +385,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="file_encryption_password">文件加密密码</string>
     <string name="no_password_set_cannot_encrypt_decrypt">没有设置密码，不能加密或解密。\n请前往设置 -&gt; 常规 -&gt; 密码来设置密码。</string>
     <string name="encrypt_file_content">加密文件内容</string>
-    <string name="utf8_with_bom">使用 BOM 的 UTF-8</string>
+    <string name="utf8_with_bom">带 BOM 的 UTF-8</string>
     <string name="could_not_encrypt_file_content_the_file_was_not_saved">无法加密文件内容。文件未保存。</string>
     <string name="could_not_decrypt_file_content_wrong_password_or_is_the_file_maybe_not_encrypted">无法解密文件内容。 您是否使用了错误的密码？ 文件是否真的使用 Markors AES 加密方式进行加密？</string>
     <string name="password_already_set_setting_a_new_password_will_overwrite">密码已设置。 设置新密码将覆盖现有密码，如果您忘记密码，您可能无法再访问文件。</string>
@@ -422,22 +434,26 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="insert_context">插入情境</string>
     <string name="browse_todo">浏览待办事项</string>
     <string name="browse_by_priority">按优先级浏览</string>
-    <string name="browse_by_due_date">按到期日浏览</string>
-    <string name="due_overdue">过期时间</string>
+    <string name="browse_by_due_date">按截止时间浏览</string>
+    <string name="due_overdue">到期时间</string>
     <string name="due_today">今日到期</string>
     <string name="due_future">将来到期</string>
     <string name="completed">已完成</string>
     <string name="advanced_filtering">高级筛选</string>
-    <string name="match_any">任何匹配</string>
+    <string name="match_any">匹配任意</string>
     <string name="match_all">匹配全部</string>
     <string name="dynamic_notebook_root_links">动态搜索笔记本根目录</string>
     <string name="search_dynamically_for_notebook_root">为了跟随维基链接，动态地搜索notbook.zim文件来识别当前笔记本的根目录。 如果您使用多个zim笔记本或者应用程序中的笔记本目录与您的zim笔记本不对应，请选中此项。</string>
     <string name="share_into_format_prefix_for_text_shared">分享到 Markor 的文本的格式/前缀。遵循 Android 的 SimpleDateFormat 规则。\n\n使用占位符 {{text}} 来放置分享的文本。如果未指定，分享的文本将附加在最后，格式为前缀。</string>
     <string name="share_into_format">分享到 - 格式</string>
+    <string name="attachment_folder_name">附件文件夹名</string>
+    <string name="attachment_folder_name_desc">当前文件夹下保存附件的子文件夹。如留空，附件将被保存在当前文件夹中。</string>
     <string name="auto_format">自动格式</string>
     <string name="insert_snippet">插入片段</string>
+    <string name="snippet_directory">文本片段/模板目录</string>
     <string name="error_could_not_open_file">错误：无法打开文件。</string>
     <string name="document_error_clip">出现错误：文本已复制到剪贴板。</string>
-    <string name="wont_save_min_length">未自动保存字符数不到 %d 的文件以防止数据丢失。</string>
+    <string name="wont_save_min_length">字符数不到 %d 的文件不会自动保存防止数据丢失。</string>
     <string name="advanced_filtering_help"><![CDATA[<small><a href="https://www.github.com/gsantner/markor/discussions/1940">高级过滤语法</a></small>]]></string>
+    <string name="filter">过滤器</string>
 </resources>

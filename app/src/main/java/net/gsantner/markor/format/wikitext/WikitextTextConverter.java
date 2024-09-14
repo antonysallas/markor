@@ -1,6 +1,6 @@
 /*#######################################################
  *
- *   Maintained 2018-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+ *   Maintained 2018-2024 by Gregor Santner <gsantner AT mailbox DOT org>
  *   License of this file: Apache 2.0
  *     https://www.apache.org/licenses/LICENSE-2.0
  *
@@ -14,15 +14,18 @@ import androidx.arch.core.util.Function;
 import net.gsantner.markor.ApplicationObject;
 import net.gsantner.markor.format.FormatRegistry;
 import net.gsantner.markor.format.TextConverterBase;
-import net.gsantner.markor.frontend.textview.TextViewUtils;
 import net.gsantner.markor.model.AppSettings;
+import net.gsantner.opoc.format.GsTextUtils;
 
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,25 +38,26 @@ public class WikitextTextConverter extends TextConverterBase {
     /**
      * First, convert Wikitext to regular Markor markdown. Then, calls the regular converter.
      *
-     * @param markup              Markup text
-     * @param context             Android Context
-     * @param isExportInLightMode True if the light theme is to apply.
-     * @param file                The file to convert.
+     * @param markup    Markup text
+     * @param context   Android Context
+     * @param lightMode True if the light theme is to apply.
+     * @param lineNum
+     * @param file      The file to convert.
      * @return HTML text
      */
     @Override
-    public String convertMarkup(String markup, Context context, boolean isExportInLightMode, File file) {
+    public String convertMarkup(String markup, Context context, boolean lightMode, boolean lineNum, File file) {
         String contentWithoutHeader = markup.replaceFirst(WikitextSyntaxHighlighter.ZIMHEADER.toString(), "");
         StringBuilder markdownContent = new StringBuilder();
 
         for (String line : contentWithoutHeader.split("\\r\\n|\\r|\\n")) {
-            String markdownEquivalentLine = getMarkdownEquivalentLine(context, file, line, isExportInLightMode);
+            String markdownEquivalentLine = getMarkdownEquivalentLine(context, file, line, lightMode);
             markdownContent.append(markdownEquivalentLine);
             markdownContent.append("  "); // line breaks must be made explicit in markdown by two spaces
             markdownContent.append(String.format("%n"));
         }
 
-        return FormatRegistry.CONVERTER_MARKDOWN.convertMarkup(markdownContent.toString(), context, isExportInLightMode, file);
+        return FormatRegistry.CONVERTER_MARKDOWN.convertMarkup(markdownContent.toString(), context, lightMode, lineNum, file);
     }
 
     private String getMarkdownEquivalentLine(final Context context, final File file, String wikitextLine, final boolean isExportInLightMode) {
@@ -110,7 +114,7 @@ public class WikitextTextConverter extends TextConverterBase {
         int markdownLevel = 7 - Math.min(6, equalSignsCount);
 
         return String.format("%s %s",
-                TextViewUtils.repeatChars('#', markdownLevel),
+                GsTextUtils.repeatChars('#', markdownLevel),
                 group.replaceAll("^=+\\s*|\\s*=+$", ""));
     }
 
@@ -154,34 +158,60 @@ public class WikitextTextConverter extends TextConverterBase {
         String currentPageFileName = file.getName();
         String currentPageFolderName = currentPageFileName.replaceFirst(".txt$", "");
         String markdownPathToImage = FilenameUtils.concat(currentPageFolderName, imagePathFromPageFolder);
-        return "![" + file.getName() + "](" + markdownPathToImage + ")";
-    }
 
-    /**
-     * NOTE: This method only works if the full file path is specified.
-     *
-     * @param filepath   of a file
-     * @param extWithDot
-     * @return true if the file extension is .txt and the file contains a zim header; false otherwise
-     */
-    @Override
-    protected boolean isFileOutOfThisFormat(String filepath, String extWithDot) {
-        if (extWithDot.equals(".txt")) {
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new FileReader(new File(filepath)));
-                return WikitextSyntaxHighlighter.ZIMHEADER_CONTENT_TYPE_ONLY.matcher(reader.readLine()).find();
-            } catch (Exception ignored) {
-            } finally {
-                try {
-                    if (reader != null) {
-                        reader.close();
+        // Zim may insert in the image link, after a '?' character, the 'id', 'width',
+        // 'height', 'type', and 'href' tags, separating them with a '&' character, so
+        // you may not want to use '?' and '&' as directory or file name:
+        // https://github.com/zim-desktop-wiki/zim-desktop-wiki/blob/c88cf3cb53896bf272e87704826b77e82eddb3ef/zim/formats/__init__.py#L903
+        final int pos = markdownPathToImage.indexOf("?");
+        if (pos != -1) {
+            final String image = markdownPathToImage.substring(0, pos);
+            final String[] options = markdownPathToImage.substring(pos + 1).split("&");
+            String link = null; // <a href="link"></a> or [![name](image)](link)
+            StringBuilder attributes = new StringBuilder(); // <img id="" width="" height="" />
+            // The 'type' tag is for backward compatibility of image generators before
+            // Zim version 0.70.  Here, it probably may be ignored:
+            // https://github.com/zim-desktop-wiki/zim-desktop-wiki/blob/c88cf3cb53896bf272e87704826b77e82eddb3ef/zim/formats/wiki.py#586
+            final Pattern tags = Pattern.compile("(id|width|height|href)=(.+)", Pattern.CASE_INSENSITIVE);
+            for (String item : options) {
+                final Matcher data = tags.matcher(item);
+                if (data.matches()) {
+                    final String key = Objects.requireNonNull(data.group(1)).toLowerCase();
+                    String value = data.group(2);
+                    try {
+                        value = URLDecoder.decode(value, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception ignored) {
+                    if (key.equals("href")) {
+                        link = value;
+                    } else {
+                        attributes.append(String.format("%s=\"%s\" ", key, value));
+                    }
                 }
             }
+            String html = String.format("<img src=\"%s\" alt=\"%s\" %s/>", image, currentPageFileName, attributes);
+            if (link != null) {
+                AppSettings settings = ApplicationObject.settings();
+                File notebookDir = settings.getNotebookDirectory();
+                link = WikitextLinkResolver.resolveAttachmentPath(link, notebookDir, file, settings.isWikitextDynamicNotebookRootEnabled());
+                html = String.format("<a href=\"%s\">%s</a>", link, html);
+            }
+            return html;
         }
-        return Arrays.asList(new String[]{".wikitext"}).contains(extWithDot);
+
+        return String.format("![%s](%s)", currentPageFileName, markdownPathToImage);
+    }
+
+    @Override
+    protected boolean isFileOutOfThisFormat(final File file, final String name, final String ext) {
+        if (ext.equals(".txt")) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                return WikitextSyntaxHighlighter.ZIMHEADER_CONTENT_TYPE_ONLY.matcher(reader.readLine()).find();
+            } catch (Exception ignored) {
+            }
+        }
+        return Arrays.asList(new String[]{".wikitext"}).contains(ext);
     }
 
     /*

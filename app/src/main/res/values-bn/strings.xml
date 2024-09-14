@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
 
 To the extent possible under law, the person who associated CC0 with
 this file has waived all copyright and related or neighboring rights
@@ -27,7 +27,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="create_folder">ফোল্ডার তৈরি করুন</string>
     <string name="create_new_document">নতুন ডকুমেন্ট তৈরি করুন</string>
     <string name="move">সরান</string>
-    <string name="copy">Ftt</string>
     <string name="info">তথ্য</string>
     <string name="file_folder_already_exists_please_use_a_different_name">ফাইল/ফোল্ডার আগেই আছে! অনুগ্রহ করে অন্য নাম ব্যবহার করো</string>
     <string name="import_from_device">ডিভাইস থেকে আমদানি করো</string>
@@ -57,6 +56,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="render_rtl_language">ডান থেকে বামের ভাষার জন্য প্রক্রিয়া করো</string>
     <string name="error_cannot_create_notebook_dir__appspecific">ত্রুটি: নোটবই এর ডাইরেক্টরি তৈরি করা যায়নি</string>
     <string name="last_modified_witharg">শেষ পরিবর্তিত: %s</string>
+    <string name="last_modified">শেষ পরিবর্তিত</string>
     <string name="select_this_folder">ফোল্ডার নির্বাচন করো</string>
     <string name="select">নির্বাচন</string>
     <string name="create">তৈরি</string>
@@ -66,7 +66,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="hide_statusbar_at_this_view">এই জায়গায় স্ট্যাটাস বার (অবস্থা নির্দেশক অংশ) লোকাও</string>
     <string name="hide_statusbar">স্ট্যাটাস বার লোকাও</string>
     <string name="name">নাম</string>
-    <string name="insert_link">লিঙ্ক সন্নিবেশিত করুন</string>
     <string name="insert_image">ছবি সন্নিবেশিত করুন</string>
     <string name="contributors">অবদানকারীরা</string>
     <string name="save_location">অবস্থান সংরক্ষণ করুন</string>

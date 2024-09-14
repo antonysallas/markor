@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
 
 To the extent possible under law, the person who associated CC0 with
 this file has waived all copyright and related or neighboring rights
@@ -27,7 +27,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="create_folder">ෆෝල්ඩරය නිර්මාණය</string>
     <string name="create_new_document">නව ලේඛනයක් සාදන්න</string>
     <string name="move">චලනය කරන්න</string>
-    <string name="copy">පිටපත් කරන්න</string>
     <string name="info">තොරතුරු</string>
     <string name="file_folder_already_exists_please_use_a_different_name">ගොනුව/ෆෝල්ඩරය දැනටමත් පවතී! කරුණාකර වෙනත් නමක් භාවිතා කරන්න</string>
     <string name="import_from_device">උපාංගයෙන් ආයාත කරන්න</string>
@@ -67,7 +66,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="hide_statusbar">තත්ව තීරුව සඟවන්න</string>
     <string name="name">නම</string>
     <string name="url_or_path">URL / මාර්ගය</string>
-    <string name="insert_link">සබැඳිය ඇතුළු කරන්න</string>
     <string name="insert_image">රූපය ඇතුළු කරන්න</string>
     <string name="contributors">සහදායකයින්</string>
     <string name="save_location">ස්ථානය සුරකින්න</string>
@@ -302,7 +300,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="reload">නැවත පූරණය</string>
     <string name="wrap_words">වචන ඔතා</string>
     <string name="soft_break_if_not_fit_to_width_else_enable_horizontal_scrolling">පෙළ තිරයේ පළලට නොගැලපේ නම් මෘදු බිඳීම. එසේත් නැතිනම් තිරස් අනුචලනය සබල කරන්න.</string>
-    <string name="recursive_search_in_current_directory">වත්මන් නාමාවලියෙහි පුනරාවර්තන සෙවුම.</string>
     <string name="always_open_with_this_app">මෙම යෙදුම සමඟ සැමවිටම විවෘත කරන්න</string>
     <string name="always_open_files_with_this_app_when_list_contains_file_extension">ලැයිස්තුවේ ගොනු දිගුව ඇති විට සෑම විටම මෙම යෙදුම සමඟ ගොනු විවෘත කරන්න. ඔබට වෙබ් ගොනු සහ ගොනු දිගුවක් නොමැති ඒවා සංස්කරණය කිරීමට අවශ්‍ය නම් උදාහරණයක් ලෙස \'None, .html, .css , .js\' භාවිතා කරන්න.</string>
     <string name="rotate">කරකවන්න</string>

@@ -29,7 +29,6 @@ public class TodoTxtFilter {
 
     // Special query keywords
     // ----------------------------------------------------------------------------------------
-
     public final static String QUERY_PRIORITY_ANY = "pri";
     public final static String QUERY_DUE_TODAY = "due=";
     public final static String QUERY_DUE_OVERDUE = "due<";
@@ -38,13 +37,11 @@ public class TodoTxtFilter {
     public final static String QUERY_DONE = "done";
 
     // ----------------------------------------------------------------------------------------
-
     public static final String SAVED_TODO_VIEWS = "todo_txt__saved_todo_views";
     public static final String STRING_NONE = "-";
     private static final String TITLE = "TITLE";
     private static final String QUERY = "QUERY";
     private static final String NULL_SENTINEL = "NULL SENTINEL";
-
 
     public static final int MAX_RECENT_VIEWS = 10;
 
@@ -103,10 +100,10 @@ public class TodoTxtFilter {
             all.add(task.getDueStatus());
         }
         final List<SttFilterKey> keys = new ArrayList<>();
-        keys.add(new SttFilterKey(context.getString(R.string.due_future), Collections.frequency(all, TodoDueState.FUTURE), TodoDueState.FUTURE.toString()));
-        keys.add(new SttFilterKey(context.getString(R.string.due_today), Collections.frequency(all, TodoDueState.TODAY), TodoDueState.TODAY.toString()));
-        keys.add(new SttFilterKey(context.getString(R.string.due_overdue), Collections.frequency(all, TodoDueState.OVERDUE), TodoDueState.OVERDUE.toString()));
-        keys.add(new SttFilterKey(STRING_NONE, Collections.frequency(all, TodoDueState.NONE), TodoDueState.NONE.toString()));
+        keys.add(new SttFilterKey(context.getString(R.string.due_future), Collections.frequency(all, TodoDueState.FUTURE), QUERY_DUE_FUTURE));
+        keys.add(new SttFilterKey(context.getString(R.string.due_today), Collections.frequency(all, TodoDueState.TODAY), QUERY_DUE_TODAY));
+        keys.add(new SttFilterKey(context.getString(R.string.due_overdue), Collections.frequency(all, TodoDueState.OVERDUE), QUERY_DUE_OVERDUE));
+        keys.add(new SttFilterKey(STRING_NONE, Collections.frequency(all, TodoDueState.NONE), null));
 
         return keys;
     }
@@ -289,7 +286,8 @@ public class TodoTxtFilter {
         } else if (element.startsWith("+")) {
             result = task.getProjects().contains(element.substring(1));
         } else {
-            result = false;
+            // Default to string match
+            result = task.getLine().toLowerCase().contains(element.toLowerCase());
         }
 
         return result ? 'T' : 'F';

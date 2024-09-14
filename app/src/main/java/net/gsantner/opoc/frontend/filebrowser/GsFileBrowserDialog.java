@@ -1,9 +1,9 @@
 /*#######################################################
  *
- * SPDX-FileCopyrightText: 2017-2023 Gregor Santner <gsantner AT mailbox DOT org>
+ * SPDX-FileCopyrightText: 2017-2024 Gregor Santner <gsantner AT mailbox DOT org>
  * SPDX-License-Identifier: Unlicense OR CC0-1.0
  *
- * Written 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+ * Written 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
  * To the extent possible under law, the author(s) have dedicated all copyright and related and neighboring rights to this software to the public domain worldwide. This software is distributed without any warranty.
  * You should have received a copy of the CC0 Public Domain Dedication along with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 #########################################################*/
@@ -17,28 +17,32 @@
  */
 package net.gsantner.opoc.frontend.filebrowser;
 
-import android.content.Context;
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import net.gsantner.markor.R;
+import net.gsantner.opoc.frontend.GsSearchOrCustomTextDialog;
+import net.gsantner.opoc.util.GsContextUtils;
 import net.gsantner.opoc.wrapper.GsTextWatcherAdapter;
 
 import java.io.File;
@@ -49,8 +53,8 @@ public class GsFileBrowserDialog extends DialogFragment implements GsFileBrowser
     //########################
     public static final String FRAGMENT_TAG = "FilesystemViewerCreator";
 
-    public static GsFileBrowserDialog newInstance(GsFileBrowserOptions.Options options) {
-        GsFileBrowserDialog f = new GsFileBrowserDialog();
+    public static GsFileBrowserDialog newInstance(final GsFileBrowserOptions.Options options) {
+        final GsFileBrowserDialog f = new GsFileBrowserDialog();
         f.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
         options.listener.onFsViewerConfig(options);
         f.setDialogOptions(options);
@@ -61,13 +65,12 @@ public class GsFileBrowserDialog extends DialogFragment implements GsFileBrowser
     //## Member
     //########################
     private RecyclerView _recyclerList;
-    public TextView _dialogTitle;
+    private Toolbar _toolBar;
     private TextView _buttonCancel;
     private TextView _buttonOk;
-    private LinearLayout _utilBar;
-    private LinearLayout _buttonBar;
-    private ImageView _homeButton;
-    private ImageView _buttonSearch;
+    private FloatingActionButton _homeButton;
+    private FloatingActionButton _buttonSearch;
+    private FloatingActionButton _buttonNewDir;
     private EditText _searchEdit;
 
     private GsFileBrowserListAdapter _filesystemViewerAdapter;
@@ -80,31 +83,33 @@ public class GsFileBrowserDialog extends DialogFragment implements GsFileBrowser
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.opoc_filesystem_dialog, container, false);
-        if (getDialog() != null && getDialog().getWindow() != null) {
-            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        final Dialog dialog = getDialog();
+        final Window window = dialog != null ? dialog.getWindow() : null;
+        if (window != null) {
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            setStyle(STYLE_NORMAL, R.style.AppTheme_Unified);
         }
         return root;
     }
 
     @Override
-    public void onViewCreated(View root, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(final View root, final @Nullable Bundle savedInstanceState) {
         super.onViewCreated(root, savedInstanceState);
-        Context context = getContext();
+        final Activity activity = getActivity();
+
         _recyclerList = root.findViewById(R.id.ui__filesystem_dialog__list);
-        _dialogTitle = root.findViewById(R.id.ui__filesystem_dialog__title);
+        _toolBar = root.findViewById(R.id.ui__filesystem_dialog__title_bar);
         _buttonCancel = root.findViewById(R.id.ui__filesystem_dialog__button_cancel);
         _buttonOk = root.findViewById(R.id.ui__filesystem_dialog__button_ok);
-        _utilBar = root.findViewById(R.id.ui__filesystem_dialog__utilbar);
-        _buttonBar = root.findViewById(R.id.ui__filesystem_dialog__buttons);
         _homeButton = root.findViewById(R.id.ui__filesystem_dialog__home);
+        _buttonNewDir = root.findViewById(R.id.ui__filesystem_dialog__new_dir);
         _buttonSearch = root.findViewById(R.id.ui__filesystem_dialog__search_button);
         _searchEdit = root.findViewById(R.id.ui__filesystem_dialog__search_edit);
 
         _searchEdit.addTextChangedListener(GsTextWatcherAdapter.on(this::changeAdapterFilter));
-        for (final View v : new View[]{_homeButton, _buttonSearch, _buttonCancel, _buttonOk}) {
+        for (final View v : new View[]{_homeButton, _buttonSearch, _buttonNewDir, _buttonCancel, _buttonOk}) {
             v.setOnClickListener(this::onClicked);
         }
-
 
         if (_dopt == null || _buttonCancel == null) {
             dismiss();
@@ -119,10 +124,9 @@ public class GsFileBrowserDialog extends DialogFragment implements GsFileBrowser
         _buttonOk.setTextColor(rcolor(_dopt.accentColor));
         _buttonOk.setText(_dopt.okButtonText);
 
-        _dialogTitle.setTextColor(rcolor(_dopt.titleTextColor));
-        _dialogTitle.setBackgroundColor(rcolor(_dopt.primaryColor));
-        _dialogTitle.setText(_dopt.titleText);
-        _dialogTitle.setVisibility(_dopt.titleTextEnable ? View.VISIBLE : View.GONE);
+        _toolBar.setTitleTextColor(rcolor(_dopt.titleTextColor));
+        _toolBar.setTitle(_dopt.titleText);
+        _toolBar.setSubtitleTextColor(rcolor(_dopt.secondaryTextColor));
 
         _homeButton.setImageResource(_dopt.homeButtonImage);
         _homeButton.setVisibility(_dopt.homeButtonEnable ? View.VISIBLE : View.GONE);
@@ -132,20 +136,32 @@ public class GsFileBrowserDialog extends DialogFragment implements GsFileBrowser
         _buttonSearch.setVisibility(_dopt.searchEnable ? View.VISIBLE : View.GONE);
         _buttonSearch.setColorFilter(rcolor(_dopt.primaryTextColor), android.graphics.PorterDuff.Mode.SRC_ATOP);
 
+        _buttonNewDir.setImageResource(_dopt.newDirButtonImage);
+        _buttonNewDir.setVisibility(_dopt.newDirButtonEnable ? View.VISIBLE : View.GONE);
+        _buttonNewDir.setColorFilter(rcolor(_dopt.primaryTextColor), android.graphics.PorterDuff.Mode.SRC_ATOP);
+
         _searchEdit.setHint(_dopt.searchHint);
         _searchEdit.setTextColor(rcolor(_dopt.primaryTextColor));
         _searchEdit.setHintTextColor(rcolor(_dopt.secondaryTextColor));
+        _searchEdit.setOnFocusChangeListener((v, isFocussed) -> {
+            GsContextUtils.instance.showSoftKeyboard(getActivity(), isFocussed, _searchEdit);
+        });
 
         root.setBackgroundColor(rcolor(_dopt.backgroundColor));
 
-        LinearLayoutManager lam = (LinearLayoutManager) _recyclerList.getLayoutManager();
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(), lam.getOrientation());
-        _recyclerList.addItemDecoration(dividerItemDecoration);
+        // final LinearLayoutManager lam = (LinearLayoutManager) _recyclerList.getLayoutManager();
+        // final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(activity, lam.getOrientation());
+        // _recyclerList.addItemDecoration(dividerItemDecoration);
+        _recyclerList.setItemViewCacheSize(20);
 
-        _filesystemViewerAdapter = new GsFileBrowserListAdapter(_dopt, context);
+        _filesystemViewerAdapter = new GsFileBrowserListAdapter(_dopt, activity);
         _recyclerList.setAdapter(_filesystemViewerAdapter);
         _filesystemViewerAdapter.getFilter().filter("");
         onFsViewerDoUiUpdate(_filesystemViewerAdapter);
+
+        // Setup callbacks
+        _dopt.setSubtitle = _toolBar::setSubtitle;
+        _dopt.setTitle = _toolBar::setTitle;
     }
 
     private int rcolor(@ColorRes int colorRes) {
@@ -156,7 +172,6 @@ public class GsFileBrowserDialog extends DialogFragment implements GsFileBrowser
         _dopt = options;
         _callback = _dopt.listener;
         _dopt.listener = this;
-        checkOptions();
     }
 
     public void changeAdapterFilter(CharSequence s, int start, int before, int count) {
@@ -165,7 +180,7 @@ public class GsFileBrowserDialog extends DialogFragment implements GsFileBrowser
         }
     }
 
-    public void onClicked(View view) {
+    public void onClicked(final View view) {
         switch (view.getId()) {
             case R.id.ui__filesystem_dialog__button_ok:
             case R.id.ui__filesystem_dialog__home: {
@@ -173,33 +188,60 @@ public class GsFileBrowserDialog extends DialogFragment implements GsFileBrowser
                 break;
             }
             case R.id.ui__filesystem_dialog__search_button: {
-                _buttonSearch.setVisibility(View.GONE);
-                _searchEdit.setVisibility(View.VISIBLE);
-                _searchEdit.requestFocus();
-                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(_searchEdit, InputMethodManager.SHOW_IMPLICIT);
+                if (_searchEdit.getVisibility() == View.GONE) {
+                    _searchEdit.setText("");
+                    _searchEdit.setVisibility(View.VISIBLE);
+                    _searchEdit.requestFocus();
+                } else {
+                    _searchEdit.setText("");
+                    _searchEdit.setVisibility(View.GONE);
+                    _searchEdit.clearFocus();
+                }
                 break;
             }
             case R.id.ui__filesystem_dialog__button_cancel: {
-                onFsViewerNothingSelected(_dopt.requestId);
+                onFsViewerCancel(_dopt.requestId);
                 break;
             }
-
-        }
-    }
-
-    private void checkOptions() {
-        if (_dopt.doSelectFile && !_dopt.doSelectMultiple) {
-            _dopt.okButtonEnable = false;
+            case R.id.ui__filesystem_dialog__new_dir: {
+                showNewDirDialog();
+                break;
+            }
         }
     }
 
     @Override
-    public void onFsViewerSelected(String request, File file, final Integer lineNumber) {
+    public void onDismiss(final DialogInterface dialog) {
+        super.onDismiss(dialog);
+        GsContextUtils.instance.showSoftKeyboard(getActivity(), false, _searchEdit);
+    }
+
+    private void showNewDirDialog() {
+        final Activity activity = getActivity();
+
+        if (activity == null) {
+            return;
+        }
+
+        final GsSearchOrCustomTextDialog.DialogOptions dopt = new GsSearchOrCustomTextDialog.DialogOptions();
+        dopt.isDarkDialog = GsContextUtils.instance.isDarkModeEnabled(activity);
+        dopt.titleText = _dopt.newDirButtonText;
+        dopt.textColor = rcolor(_dopt.primaryTextColor);
+        dopt.searchHintText = android.R.string.untitled;
+        dopt.searchInputFilter = GsContextUtils.instance.makeFilenameInputFilter();
+        dopt.callback = name -> _filesystemViewerAdapter.createDirectoryHere(name);
+
+        GsSearchOrCustomTextDialog.showMultiChoiceDialogWithSearchFilterUI(activity, dopt);
+    }
+
+    @Override
+    public void onFsViewerSelected(final String request, final File file, final Integer lineNumber) {
         if (_callback != null) {
             _callback.onFsViewerSelected(_dopt.requestId, file, lineNumber);
         }
-        dismiss();
+        if (_dopt.dismissAfterCallback) {
+            dismiss();
+        }
     }
 
     @Override
@@ -207,15 +249,19 @@ public class GsFileBrowserDialog extends DialogFragment implements GsFileBrowser
         if (_callback != null) {
             _callback.onFsViewerMultiSelected(_dopt.requestId, files);
         }
-        dismiss();
+        if (_dopt.dismissAfterCallback) {
+            dismiss();
+        }
     }
 
     @Override
-    public void onFsViewerNothingSelected(String request) {
+    public void onFsViewerCancel(String request) {
         if (_callback != null) {
-            _callback.onFsViewerNothingSelected(_dopt.requestId);
+            _callback.onFsViewerCancel(_dopt.requestId);
         }
-        dismiss();
+        if (_dopt.dismissAfterCallback) {
+            dismiss();
+        }
     }
 
     @Override
@@ -232,6 +278,9 @@ public class GsFileBrowserDialog extends DialogFragment implements GsFileBrowser
         }
         if (_callback != null) {
             _callback.onFsViewerDoUiUpdate(adapter);
+        }
+        if (adapter.getCurrentFolder() != null) {
+            _toolBar.setSubtitle(adapter.getCurrentFolder().getName());
         }
     }
 

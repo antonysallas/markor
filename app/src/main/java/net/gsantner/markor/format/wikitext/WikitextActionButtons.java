@@ -1,6 +1,6 @@
 /*#######################################################
  *
- *   Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+ *   Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
  *   License of this file: Apache 2.0
  *     https://www.apache.org/licenses/LICENSE-2.0
  *
@@ -16,7 +16,6 @@ import androidx.annotation.StringRes;
 import net.gsantner.markor.R;
 import net.gsantner.markor.activity.DocumentActivity;
 import net.gsantner.markor.format.ActionButtonBase;
-import net.gsantner.markor.frontend.AttachLinkOrFileDialog;
 import net.gsantner.markor.frontend.MarkorDialogFactory;
 import net.gsantner.markor.frontend.textview.AutoTextFormatter;
 import net.gsantner.markor.frontend.textview.TextViewUtils;
@@ -32,6 +31,8 @@ import java.util.regex.Matcher;
 
 public class WikitextActionButtons extends ActionButtonBase {
 
+    private MarkorDialogFactory.HeadlineDialogState _headlineDialogState = new MarkorDialogFactory.HeadlineDialogState();
+
     public WikitextActionButtons(@NonNull Context context, Document document) {
         super(context, document);
     }
@@ -43,9 +44,8 @@ public class WikitextActionButtons extends ActionButtonBase {
     }
 
     @Override
-    public List<ActionItem> getActiveActionList() {
-
-        final ActionItem[] ACTION_ITEMS = {
+    public List<ActionItem> getFormatActionList() {
+        return Arrays.asList(
                 new ActionItem(R.string.abid_common_checkbox_list, R.drawable.ic_check_box_black_24dp, R.string.check_list),
                 new ActionItem(R.string.abid_common_unordered_list_char, R.drawable.ic_list_black_24dp, R.string.unordered_list),
                 new ActionItem(R.string.abid_wikitext_bold, R.drawable.ic_format_bold_black_24dp, R.string.bold),
@@ -56,29 +56,16 @@ public class WikitextActionButtons extends ActionButtonBase {
                 new ActionItem(R.string.abid_wikitext_h1, R.drawable.format_header_1, R.string.heading_1),
                 new ActionItem(R.string.abid_wikitext_h2, R.drawable.format_header_2, R.string.heading_2),
                 new ActionItem(R.string.abid_wikitext_h3, R.drawable.format_header_3, R.string.heading_3),
-                new ActionItem(R.string.abid_common_delete_lines, R.drawable.ic_delete_black_24dp, R.string.delete_lines),
-                new ActionItem(R.string.abid_common_open_link_browser, R.drawable.ic_open_in_browser_black_24dp, R.string.open_link),
-                new ActionItem(R.string.abid_common_special_key, R.drawable.ic_keyboard_black_24dp, R.string.special_key),
-                new ActionItem(R.string.abid_common_time, R.drawable.ic_access_time_black_24dp, R.string.date_and_time),
                 new ActionItem(R.string.abid_common_ordered_list_number, R.drawable.ic_format_list_numbered_black_24dp, R.string.ordered_list),
                 new ActionItem(R.string.abid_common_accordion, R.drawable.ic_arrow_drop_down_black_24dp, R.string.accordion),
                 new ActionItem(R.string.abid_common_indent, R.drawable.ic_format_indent_increase_black_24dp, R.string.indent),
                 new ActionItem(R.string.abid_common_deindent, R.drawable.ic_format_indent_decrease_black_24dp, R.string.deindent),
                 new ActionItem(R.string.abid_wikitext_h4, R.drawable.format_header_4, R.string.heading_4),
                 new ActionItem(R.string.abid_wikitext_h5, R.drawable.format_header_5, R.string.heading_5),
-                new ActionItem(R.string.abid_wikitext_insert_image, R.drawable.ic_image_black_24dp, R.string.insert_image),
-                new ActionItem(R.string.abid_wikitext_insert_link, R.drawable.ic_link_black_24dp, R.string.insert_link),
-                new ActionItem(R.string.abid_common_new_line_below, R.drawable.ic_baseline_keyboard_return_24, R.string.start_new_line_below),
-                new ActionItem(R.string.abid_common_move_text_one_line_up, R.drawable.ic_baseline_arrow_upward_24, R.string.move_text_one_line_up),
-                new ActionItem(R.string.abid_common_move_text_one_line_down, R.drawable.ic_baseline_arrow_downward_24, R.string.move_text_one_line_down),
-                new ActionItem(R.string.abid_common_insert_snippet, R.drawable.ic_baseline_file_copy_24, R.string.insert_snippet),
-
-                new ActionItem(R.string.abid_common_web_jump_to_very_top_or_bottom, R.drawable.ic_vertical_align_center_black_24dp, R.string.jump_to_bottom, ActionItem.DisplayMode.VIEW),
-                new ActionItem(R.string.abid_common_web_jump_to_table_of_contents, R.drawable.ic_list_black_24dp, R.string.table_of_contents, ActionItem.DisplayMode.VIEW),
-                new ActionItem(R.string.abid_common_rotate_screen, R.drawable.ic_rotate_left_black_24dp, R.string.rotate, ActionItem.DisplayMode.ANY),
-        };
-
-        return Arrays.asList(ACTION_ITEMS);
+                new ActionItem(R.string.abid_common_insert_audio, R.drawable.ic_keyboard_voice_black_24dp, R.string.audio),
+                new ActionItem(R.string.abid_common_insert_image, R.drawable.ic_image_black_24dp, R.string.insert_image),
+                new ActionItem(R.string.abid_common_insert_link, R.drawable.ic_link_black_24dp, R.string.insert_link)
+        );
     }
 
     @Override
@@ -119,34 +106,23 @@ public class WikitextActionButtons extends ActionButtonBase {
                 return true;
             }
             case R.string.abid_wikitext_bold: {
-                runInlineAction("**");
+                runSurroundAction("**");
                 return true;
             }
             case R.string.abid_wikitext_italic: {
-                runInlineAction("//");
+                runSurroundAction("//");
                 return true;
             }
             case R.string.abid_wikitext_highlight: {
-                runInlineAction("__");
+                runSurroundAction("__");
                 return true;
             }
             case R.string.abid_wikitext_strikeout: {
-                runInlineAction("~~");
+                runSurroundAction("~~");
                 return true;
             }
             case R.string.abid_wikitext_code_inline: {
-                runInlineAction("''");
-                return true;
-            }
-            // case R.string.abid_wikitext_horizontal_line: {
-            //       runInlineAction("----\n");
-            //       return true;
-            // }
-            case R.string.abid_wikitext_insert_link:
-                AttachLinkOrFileDialog.showInsertImageOrLinkDialog(AttachLinkOrFileDialog.FILE_OR_LINK_ACTION, _document.getFormat(), getActivity(), _hlEditor, _document.getFile());
-                return true;
-            case R.string.abid_wikitext_insert_image: {
-                AttachLinkOrFileDialog.showInsertImageOrLinkDialog(AttachLinkOrFileDialog.IMAGE_ACTION, _document.getFormat(), getActivity(), _hlEditor, _document.getFile());
+                runSurroundAction("''");
                 return true;
             }
             case R.string.abid_common_indent:
@@ -175,13 +151,13 @@ public class WikitextActionButtons extends ActionButtonBase {
                 runRegexReplaceAction(WikitextReplacePatternGenerator.removeCheckbox());
                 return true;
             }
-            case R.string.abid_wikitext_insert_link: {
+            case R.string.abid_common_insert_link: {
                 int pos = _hlEditor.getSelectionStart();
                 _hlEditor.getText().insert(pos, "[[]]");
                 _hlEditor.setSelection(pos + 2);
                 return true;
             }
-            case R.string.abid_wikitext_insert_image: {
+            case R.string.abid_common_insert_image: {
                 int pos = _hlEditor.getSelectionStart();
                 _hlEditor.getText().insert(pos, "{{}}");
                 _hlEditor.setSelection(pos + 2);
@@ -221,7 +197,7 @@ public class WikitextActionButtons extends ActionButtonBase {
         if (resolver.isWebLink()) {
             getCu().openWebpageInExternalBrowser(getContext(), resolvedLink);
         } else {
-            DocumentActivity.launch(getActivity(), new File(resolvedLink), false, null, null);
+            DocumentActivity.launch(getActivity(), new File(resolvedLink), false, null);
         }
     }
 
@@ -285,7 +261,13 @@ public class WikitextActionButtons extends ActionButtonBase {
 
     @Override
     public boolean runTitleClick() {
-        MarkorDialogFactory.showHeadlineDialog(WikitextSyntaxHighlighter.HEADING.toString(), getActivity(), _hlEditor);
+        final Matcher m = WikitextSyntaxHighlighter.HEADING.matcher("");
+        MarkorDialogFactory.showHeadlineDialog(getActivity(), _hlEditor, _webView, _headlineDialogState, (text, start, end) -> {
+            if (m.reset(text.subSequence(start, end)).find()) {
+                return 7 - (m.end(2) - m.start(2));
+            }
+            return -1;
+        });
         return true;
     }
 

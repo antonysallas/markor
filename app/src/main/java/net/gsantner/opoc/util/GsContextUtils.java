@@ -1,9 +1,9 @@
 /*#######################################################
  *
- * SPDX-FileCopyrightText: 2016-2023 Gregor Santner <gsantner AT mailbox DOT org>
+ * SPDX-FileCopyrightText: 2016-2024 Gregor Santner <gsantner AT mailbox DOT org>
  * SPDX-License-Identifier: Unlicense OR CC0-1.0
  *
- * Written 2016-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+ * Written 2016-2024 by Gregor Santner <gsantner AT mailbox DOT org>
  * To the extent possible under law, the author(s) have dedicated all copyright and related and neighboring rights to this software to the public domain worldwide. This software is distributed without any warranty.
  * You should have received a copy of the CC0 Public Domain Dedication along with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 #########################################################*/
@@ -12,6 +12,9 @@ package net.gsantner.opoc.util;
 import static android.graphics.Bitmap.CompressFormat;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -55,6 +58,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.IBinder;
 import android.os.ParcelFileDescriptor;
 import android.os.SystemClock;
 import android.os.VibrationEffect;
@@ -139,6 +143,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
@@ -147,9 +152,12 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.Set;
 
 @SuppressWarnings({"UnusedReturnValue", "rawtypes", "unused"})
 public class GsContextUtils {
@@ -171,7 +179,8 @@ public class GsContextUtils {
     //########################
     @SuppressLint("ConstantLocale")
     public final static Locale INITIAL_LOCALE = Locale.getDefault();
-    public final static String EXTRA_FILEPATH = "real_file_path_2";
+    public final static String EXTRA_FILEPATH = "EXTRA_FILEPATH";
+    public final static String EXTRA_URI = "EXTRA_URI";
     public final static SimpleDateFormat DATEFORMAT_RFC3339ISH = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss", INITIAL_LOCALE);
     public final static String MIME_TEXT_PLAIN = "text/plain";
     public final static String PREF_KEY__SAF_TREE_URI = "pref_key__saf_tree_uri";
@@ -182,10 +191,13 @@ public class GsContextUtils {
     public final static int REQUEST_SAF = 50003;
     public final static int REQUEST_STORAGE_PERMISSION_M = 50004;
     public final static int REQUEST_STORAGE_PERMISSION_R = 50005;
+    public final static int REQUEST_RECORD_AUDIO = 50006;
+    private final static int BLINK_ANIMATOR_TAG = -1206813720;
 
     public static int TEXTFILE_OVERWRITE_MIN_TEXT_LENGTH = 2;
     protected static Pair<File, List<Pair<String, String>>> m_cacheLastExtractFileMetadata;
-    protected static String m_lastCameraPictureFilepath;
+    protected static String _lastCameraPictureFilepath = null;
+    protected static WeakReference<GsCallback.a1<String>> _receivePathCallback = null;
     protected static String m_chooserTitle = "➥";
 
 
@@ -254,7 +266,7 @@ public class GsContextUtils {
      */
     @ColorInt
     public int rcolor(final Context context, @ColorRes final int resId) {
-        if (resId == 0) {
+        if (context == null || resId == 0) {
             Log.e(getClass().getName(), "GsContextUtils::rcolor: resId is 0!");
             return Color.BLACK;
         }
@@ -1077,7 +1089,7 @@ public class GsContextUtils {
                 return info.authority;
             }
         }
-        return null;
+        throw new RuntimeException("Error at GsContextUtils::getFileProviderAuthority(context): No FileProvider authority setup");
     }
 
     /**
@@ -1105,7 +1117,6 @@ public class GsContextUtils {
             context.startActivityForResult(intent, requestCode);
         } else {
             context.startActivity(intent);
-
         }
         context.overridePendingTransition(getResId(context, ResType.DIMEN, "fadein"), getResId(context, ResType.DIMEN, "fadeout"));
         if (finishFromActivity != null && finishFromActivity) {
@@ -1115,28 +1126,9 @@ public class GsContextUtils {
     }
 
 
-    public String getFileProviderAuthority(final Context context) {
-        final String provider = getFileProvider(context);
-        if (TextUtils.isEmpty(provider)) {
-            throw new RuntimeException("Error at GsContextUtils::getFileProviderAuthority(context): No FileProvider authority setup");
-        }
-        return provider;
-    }
-
-
     public <T extends GsContextUtils> T setChooserTitle(final String title) {
         m_chooserTitle = title;
         return thisp();
-    }
-
-    /**
-     * Convert a {@link File} to an {@link Uri}
-     *
-     * @param file the file
-     * @return Uri for this file
-     */
-    public Uri getUriByFileProviderAuthority(final Context context, final File file) {
-        return FileProvider.getUriForFile(context, getFileProviderAuthority(context), file);
     }
 
     /**
@@ -1154,6 +1146,15 @@ public class GsContextUtils {
     }
 
     public <T extends GsContextUtils> T setLauncherActivityEnabled(final Context context, Class activityClass, boolean enable) {
+        try {
+            ComponentName component = new ComponentName(context, activityClass);
+            context.getPackageManager().setComponentEnabledSetting(component, enable ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        } catch (Exception ignored) {
+        }
+        return thisp();
+    }
+
+    public <T extends GsContextUtils> T setLauncherActivityEnabledFromString(final Context context, String activityClass, boolean enable) {
         try {
             ComponentName component = new ComponentName(context, activityClass);
             context.getPackageManager().setComponentEnabledSetting(component, enable ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
@@ -1236,7 +1237,7 @@ public class GsContextUtils {
         intent.setType(mimeType);
 
         try {
-            Uri fileUri = FileProvider.getUriForFile(context, getFileProviderAuthority(context), file);
+            final Uri fileUri = FileProvider.getUriForFile(context, getFileProvider(context), file);
             intent.putExtra(Intent.EXTRA_STREAM, fileUri);
             showChooser(context, intent, null);
             return true;
@@ -1255,7 +1256,7 @@ public class GsContextUtils {
         ArrayList<Uri> uris = new ArrayList<>();
         for (File file : files) {
             File uri = new File(file.toString());
-            uris.add(FileProvider.getUriForFile(context, getFileProviderAuthority(context), file));
+            uris.add(FileProvider.getUriForFile(context, getFileProvider(context), file));
         }
 
         try {
@@ -1312,6 +1313,7 @@ public class GsContextUtils {
         if (!(context instanceof Activity)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
+
         context.startActivity(intent);
     }
 
@@ -1324,7 +1326,7 @@ public class GsContextUtils {
         // On some specific devices the first won't work
         Uri fileUri = null;
         try {
-            fileUri = FileProvider.getUriForFile(context, getFileProviderAuthority(context), file);
+            fileUri = FileProvider.getUriForFile(context, getFileProvider(context), file);
         } catch (Exception ignored) {
             try {
                 fileUri = Uri.fromFile(file);
@@ -1340,12 +1342,11 @@ public class GsContextUtils {
             intent.putExtra(EXTRA_FILEPATH, file.getAbsolutePath());
             intent.putExtra(Intent.EXTRA_TITLE, file.getName());
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            showChooser(context, intent, null);
+            startActivity(context, intent);
             return true;
         }
         return false;
     }
-
 
     /**
      * Request installation of APK specified by file
@@ -1361,7 +1362,7 @@ public class GsContextUtils {
 
         Uri fileUri = null;
         try {
-            fileUri = FileProvider.getUriForFile(context, getFileProviderAuthority(context), file);
+            fileUri = FileProvider.getUriForFile(context, getFileProvider(context), file);
         } catch (Exception ignored) {
             try {
                 fileUri = Uri.fromFile(file);
@@ -1719,13 +1720,25 @@ public class GsContextUtils {
      * It will return the path to the image if locally stored. If retrieved from e.g. a cloud
      * service, the image will get copied to app-cache folder and it's path returned.
      */
-    public void requestGalleryPicture(final Activity activity) {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+    public void requestGalleryPicture(final Activity activity, final GsCallback.a1<String> callback) {
+        final Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         try {
             activity.startActivityForResult(intent, REQUEST_PICK_PICTURE);
+            setPathCallback(callback);
         } catch (Exception ex) {
             Toast.makeText(activity, "No gallery app installed!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public boolean requestAudioRecording(final Activity activity, final GsCallback.a1<String> callback) {
+        final Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
+        try {
+            activity.startActivityForResult(intent, REQUEST_RECORD_AUDIO);
+            setPathCallback(callback);
+            return true;
+        } catch (Exception ignored) {
+        }
+        return false;
     }
 
     public String extractFileFromIntentStr(final Context context, final Intent receivingIntent) {
@@ -1740,69 +1753,62 @@ public class GsContextUtils {
      * The requested image savepath has to be stored at caller side (not contained in intent),
      * it can be retrieved using {@link #extractResultFromActivityResult(Activity, int, int, Intent)}
      * returns null if an error happened.
-     *
-     * @param target Path to file to write to, if folder the filename gets app_name + millis + random filename. If null DCIM folder is used.
      */
-    @SuppressWarnings("RegExpRedundantEscape")
-    public String requestCameraPicture(final Activity context, final File target) {
-        final Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        final String timestampedFilename = GsFileUtils.getFilenameWithTimestamp("IMG", "", "jpg");
-        final File storageDir = target != null ? target : new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "Camera");
+    public void requestCameraPicture(final Activity activity, GsCallback.a1<String> callback) {
+        try {
+            final Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            final File picDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            final String name = GsFileUtils.getFilenameWithTimestamp("IMG", "", ".jpg");
+            final File imageTemp = GsFileUtils.findNonConflictingDest(picDir, name);
 
-        String cameraPictureFilepath = null;
-        if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
-            File photoFile;
-            try {
-                // Create an image file name
-                if (target != null && !target.isDirectory()) {
-                    photoFile = target;
+            if (takePictureIntent.resolveActivity(activity.getPackageManager()) != null && imageTemp.createNewFile()) {
+                imageTemp.deleteOnExit();
+                // Continue only if the File was successfully created
+                final Uri uri;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    uri = FileProvider.getUriForFile(activity, getFileProvider(activity), imageTemp);
                 } else {
-                    photoFile = new File(storageDir, timestampedFilename);
-                    if (photoFile.getParentFile() != null && !photoFile.getParentFile().exists() && !photoFile.getParentFile().mkdirs()) {
-                        photoFile = File.createTempFile(timestampedFilename.replace(".jpg", "_"), ".jpg", storageDir);
-                    }
+                    uri = Uri.fromFile(imageTemp);
                 }
-
-                //noinspection StatementWithEmptyBody
-                if (photoFile.getParentFile() != null && !photoFile.getParentFile().exists() && photoFile.getParentFile().mkdirs())
-                    ;
-
-                // Save a file: path for use with ACTION_VIEW intents
-                cameraPictureFilepath = photoFile.getAbsolutePath();
-            } catch (IOException ex) {
-                return null;
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri).putExtra(Intent.EXTRA_RETURN_RESULT, true);
+                activity.startActivityForResult(takePictureIntent, REQUEST_CAMERA_PICTURE);
+                _lastCameraPictureFilepath = imageTemp.getAbsolutePath();
+                setPathCallback(callback);
             }
-
-            // Continue only if the File was successfully created
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(context, getFileProviderAuthority(context), photoFile));
-            } else {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-            }
-            context.startActivityForResult(takePictureIntent, REQUEST_CAMERA_PICTURE);
+        } catch (IOException ignored) {
         }
-        m_lastCameraPictureFilepath = cameraPictureFilepath;
-        return cameraPictureFilepath;
+    }
+
+    private void setPathCallback(final GsCallback.a1<String> callback) {
+        _receivePathCallback = new WeakReference<>(callback);
+    }
+
+    private void sendPathCallback(final String path) {
+        if (!GsTextUtils.isNullOrEmpty(path) && _receivePathCallback != null) {
+            final GsCallback.a1<String> cb = _receivePathCallback.get();
+            if (cb != null) {
+                cb.callback(path);
+            }
+        }
+        // Send only once and once only
+        _receivePathCallback = null;
     }
 
     /**
      * Extract result data from {@link Activity}.onActivityResult.
      * Forward all arguments from context. Only requestCodes as implemented in {@link GsContextUtils} are analyzed.
-     * Also may forward results via local broadcast
+     * Also may forward results via callback
      */
     @SuppressLint("ApplySharedPref")
-    public Object extractResultFromActivityResult(final Activity context, final int requestCode, final int resultCode, final Intent data) {
+    public void extractResultFromActivityResult(final Activity context, final int requestCode, final int resultCode, final Intent intent) {
         switch (requestCode) {
             case REQUEST_CAMERA_PICTURE: {
-                String picturePath = (resultCode == Activity.RESULT_OK) ? m_lastCameraPictureFilepath : null;
-                if (picturePath != null) {
-                    sendLocalBroadcastWithStringExtra(context, REQUEST_CAMERA_PICTURE + "", EXTRA_FILEPATH, picturePath);
-                }
-                return picturePath;
+                sendPathCallback(resultCode == Activity.RESULT_OK ? _lastCameraPictureFilepath : null);
+                break;
             }
             case REQUEST_PICK_PICTURE: {
-                if (resultCode == Activity.RESULT_OK && data != null) {
-                    Uri selectedImage = data.getData();
+                if (resultCode == Activity.RESULT_OK && intent != null) {
+                    Uri selectedImage = intent.getData();
                     String[] filePathColumn = {MediaStore.Images.Media.DATA};
                     String picturePath = null;
 
@@ -1822,19 +1828,22 @@ public class GsContextUtils {
                     }
 
                     // Try to grab via file extraction method
-                    data.setAction(Intent.ACTION_VIEW);
-                    picturePath = picturePath != null ? picturePath : extractFileFromIntentStr(context, data);
+                    intent.setAction(Intent.ACTION_VIEW);
+                    picturePath = picturePath != null ? picturePath : extractFileFromIntentStr(context, intent);
 
                     // Retrieve image from file descriptor / Cloud, e.g.: Google Drive, Picasa
                     if (picturePath == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         try {
-                            ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(selectedImage, "r");
+                            final ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(selectedImage, "r");
                             if (parcelFileDescriptor != null) {
-                                FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-                                FileInputStream input = new FileInputStream(fileDescriptor);
+                                final FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+                                final FileInputStream input = new FileInputStream(fileDescriptor);
 
                                 // Create temporary file in cache directory
-                                picturePath = File.createTempFile("image", "tmp", context.getCacheDir()).getAbsolutePath();
+                                final File temp = File.createTempFile("image", "tmp", context.getCacheDir());
+                                temp.deleteOnExit();
+                                picturePath = temp.getAbsolutePath();
+
                                 GsFileUtils.writeFile(new File(picturePath), GsFileUtils.readCloseBinaryStream(input), null);
                             }
                         } catch (IOException ignored) {
@@ -1843,32 +1852,43 @@ public class GsContextUtils {
                     }
 
                     // Return path to picture on success, else null
-                    if (picturePath != null) {
-                        sendLocalBroadcastWithStringExtra(context, REQUEST_CAMERA_PICTURE + "", EXTRA_FILEPATH, picturePath);
-                    }
-                    return picturePath;
+                    sendPathCallback(picturePath);
                 }
                 break;
             }
-
+            case REQUEST_RECORD_AUDIO: {
+                if (resultCode == Activity.RESULT_OK && intent != null && intent.getData() != null) {
+                    final Uri uri = intent.getData();
+                    final String uriPath = uri.getPath();
+                    final String ext = uriPath.substring(uriPath.lastIndexOf("."));
+                    final String datestr = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss", Locale.ENGLISH).format(new Date());
+                    final File temp = new File(context.getCacheDir(), datestr + ext);
+                    GsFileUtils.copyUriToFile(context, uri, temp);
+                    sendPathCallback(temp.getAbsolutePath());
+                }
+                break;
+            }
             case REQUEST_SAF: {
-                if (resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
-                    Uri treeUri = data.getData();
+                if (resultCode == Activity.RESULT_OK && intent != null && intent.getData() != null) {
+                    final Uri treeUri = intent.getData();
                     PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_KEY__SAF_TREE_URI, treeUri.toString()).commit();
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                        context.getContentResolver().takePersistableUriPermission(treeUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        final ContentResolver resolver = context.getContentResolver();
+                        try {
+                            resolver.takePersistableUriPermission(treeUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        } catch (SecurityException se) {
+                            resolver.takePersistableUriPermission(treeUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        }
                     }
-                    return treeUri;
                 }
                 break;
             }
-
             case REQUEST_STORAGE_PERMISSION_M:
             case REQUEST_STORAGE_PERMISSION_R: {
-                return checkExternalStoragePermission(context);
+                checkExternalStoragePermission(context);
+                break;
             }
         }
-        return null;
     }
 
     /**
@@ -1913,18 +1933,29 @@ public class GsContextUtils {
     }
 
     /**
-     * Request edit of image (by image editor/viewer - for example to crop image)
+     * Request edit of file
      *
-     * @param file File that should be edited
+     * @param context Context to use to get provider and start activity
+     * @param file    File that should be edited
      */
-    public void requestPictureEdit(final Context context, final File file) {
-        Uri uri = getUriByFileProviderAuthority(context, file);
-        Intent intent = new Intent(Intent.ACTION_EDIT);
-        intent.setDataAndType(uri, "image/*");
-        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        intent.putExtra(EXTRA_FILEPATH, file.getAbsolutePath());
-        startActivity(context, Intent.createChooser(intent, null));
+    public void requestFileEdit(final Context context, File file) {
+        if (file == null || !file.exists()) {
+            return;
+        }
+
+        try {
+            file = file.getCanonicalFile();
+            final Uri uri = FileProvider.getUriForFile(context, getFileProvider(context), file);
+            final Intent intent = new Intent(Intent.ACTION_EDIT);
+            intent.setDataAndType(uri, GsFileUtils.getMimeType(file));
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+            intent.putExtra(EXTRA_FILEPATH, file.getPath());
+            startActivity(context, intent);
+        } catch (IOException e) {
+            Log.e(GsContextUtils.class.getName(), "ERROR: Failed to get canonical file path");
+        }
     }
 
     /**
@@ -2104,6 +2135,17 @@ public class GsContextUtils {
         return file != null && file.getParentFile() != null && CONTENT_RESOLVER_FILE_PROXY_SEGMENT.equals(file.getParentFile().getName());
     }
 
+    public Collection<File> getCacheDirs(final Context context) {
+        final Set<File> dirs = new HashSet<>();
+        dirs.add(context.getCacheDir());
+        dirs.add(context.getExternalCacheDir());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            dirs.addAll(Arrays.asList(context.getExternalCacheDirs()));
+        }
+        dirs.removeAll(Collections.singleton(null));
+        return dirs;
+    }
+
     /**
      * Check whether or not a file can be written.
      * Requires storage access framework permission for external storage (SD)
@@ -2112,53 +2154,26 @@ public class GsContextUtils {
      * @param isDir Whether or not the given file parameter is a directory
      * @return Whether or not the file can be written
      */
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public boolean canWriteFile(final Context context, final File file, final boolean isDir, final boolean trySaf) {
         if (file == null) {
             return false;
         }
-        final String realpath = file.getAbsolutePath();
-
-        // try to ensure parent directories exist and are writable
-        GsCallback.a2<File, Boolean> tryMkdirs = (f, isDir1) -> {
-            try {
-                File target = (isDir1 ? f : f.getParentFile());
-                //noinspection ConstantConditions
-                target.mkdirs();
-                target.setWritable(true);
-            } catch (Exception ignored) {
-            }
-            try {
-                if (f.exists()) {
-                    f.setWritable(true);
-                }
-            } catch (Exception ignored) {
-            }
-        };
-
-        //  Own AppData directories do not require any special permission or handling
-        final ArrayList<File> appCacheDirs = new ArrayList<>(Arrays.asList(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT ? context.getExternalCacheDirs() : new File[]{context.getExternalCacheDir()}));
-        appCacheDirs.add(context.getCacheDir());
-        appCacheDirs.removeAll(Collections.singleton(null));
-        for (File dir : appCacheDirs) {
-            if (dir.getParentFile() != null && realpath.startsWith(dir.getParentFile().getAbsolutePath())) {
-                tryMkdirs.callback(file.getAbsoluteFile(), false);
-                return true;
-            }
-        }
 
         // Try direct file access
-        tryMkdirs.callback(file, isDir);
-        if (!isDir && file.getParentFile() != null ? file.getParentFile().canWrite() : file.canWrite()) {
+        if (GsFileUtils.canCreate(file)) {
             return true;
         }
 
-        // Try with SAF
-        DocumentFile dof = getDocumentFile(context, file, isDir);
-        //noinspection RedundantIfStatement
-        if (trySaf && dof != null && dof.canWrite()) {
+        // Own AppData directories do not require any special permission or handling
+        if (GsCollectionUtils.any(getCacheDirs(context), f -> GsFileUtils.isChild(f, file))) {
             return true;
         }
+
+        if (trySaf) {
+            final DocumentFile dof = getDocumentFile(context, file, isDir);
+            return dof != null && dof.canWrite();
+        }
+
         return false;
     }
 
@@ -2471,9 +2486,15 @@ public class GsContextUtils {
             if (!TextUtils.isEmpty(v)) {
                 if (mmrfield.first == MediaMetadataRetriever.METADATA_KEY_BITRATE) {
                     v = GsFileUtils.getHumanReadableByteCountSI(Long.parseLong(v)) + "ps";
+                    if (v.startsWith("-1 ")) {
+                        continue; // invalid / unknown
+                    }
                 } else if (mmrfield.first == MediaMetadataRetriever.METADATA_KEY_DURATION) {
                     final int[] hms = GsFileUtils.getTimeDiffHMS(Long.parseLong(v), 0);
                     v = String.format("%sh %sm %ss", hms[0], hms[1], hms[2]);
+                    if (v.equals("0h 0m 0s")) {
+                        continue; // Duration key might be set but no actual duration information
+                    }
                 }
                 append.callback(mmrfield.second, v);
             }
@@ -2507,54 +2528,17 @@ public class GsContextUtils {
                 .show();
     }
 
-    public <T extends GsContextUtils> T setSoftKeyboardVisible(final Activity context, boolean visible, View... editView) {
-        if (context != null) {
-            final View v = (editView != null && editView.length > 0) ? (editView[0]) : (context.getCurrentFocus() != null && context.getCurrentFocus().getWindowToken() != null ? context.getCurrentFocus() : null);
-            final InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-            if (v != null && imm != null) {
-                Runnable r = () -> {
-                    if (visible) {
-                        v.requestFocus();
-                        imm.showSoftInput(v, InputMethodManager.SHOW_FORCED);
-                    } else {
-                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                    }
-                };
-                r.run();
-                for (int d : new int[]{100, 350}) {
-                    v.postDelayed(r, d);
+    public <T extends GsContextUtils> T showSoftKeyboard(final Activity activity, final boolean show, final View... view) {
+        if (activity != null) {
+            final InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+            final View focus = (view != null && view.length > 0) ? view[0] : activity.getCurrentFocus();
+            final IBinder token = focus != null ? focus.getWindowToken() : null;
+            if (imm != null && focus != null) {
+                if (show) {
+                    imm.showSoftInput(focus, InputMethodManager.SHOW_IMPLICIT);
+                } else if (token != null) {
+                    imm.hideSoftInputFromWindow(token, InputMethodManager.HIDE_IMPLICIT_ONLY);
                 }
-            }
-        }
-        return thisp();
-    }
-
-    public <T extends GsContextUtils> T hideSoftKeyboard(final Activity context) {
-        if (context != null) {
-            InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-            if (imm != null && context.getCurrentFocus() != null && context.getCurrentFocus().getWindowToken() != null) {
-                imm.hideSoftInputFromWindow(context.getCurrentFocus().getWindowToken(), 0);
-            }
-        }
-        return thisp();
-    }
-
-    public <T extends GsContextUtils> T showSoftKeyboard(final Activity activity) {
-        if (activity != null) {
-            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-            if (imm != null && activity.getCurrentFocus() != null && activity.getCurrentFocus().getWindowToken() != null) {
-                showSoftKeyboard(activity, activity.getCurrentFocus());
-            }
-        }
-        return thisp();
-    }
-
-
-    public <T extends GsContextUtils> T showSoftKeyboard(final Activity activity, View textInputView) {
-        if (activity != null) {
-            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-            if (imm != null && textInputView != null) {
-                imm.showSoftInput(textInputView, InputMethodManager.SHOW_FORCED);
             }
         }
         return thisp();
@@ -2697,10 +2681,12 @@ public class GsContextUtils {
     }
 
     public <T extends GsContextUtils> T setActivityNavigationBarBackgroundColor(final Activity context, @ColorInt Integer color) {
-        if (color != null) {
+        if (context != null && color != null) {
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    context.getWindow().setNavigationBarColor(color);
+                    final Window window = context.getWindow();
+                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                    window.setNavigationBarColor(color);
                 }
             } catch (Exception ignored) {
             }
@@ -2755,6 +2741,29 @@ public class GsContextUtils {
         }
     }
 
+    public static void windowAspectRatio(final Window window,
+                                         final DisplayMetrics displayMetrics,
+                                         float portraitWidthRatio,
+                                         float portraitHeightRatio,
+                                         float landscapeWidthRatio,
+                                         float landscapeHeightRatio) {
+        if (window == null) {
+            return;
+        }
+
+        WindowManager.LayoutParams params = window.getAttributes();
+        final int width = displayMetrics.widthPixels;
+        final int height = displayMetrics.heightPixels;
+        if (width < height) { // Portrait
+            params.width = (int) (width * portraitWidthRatio);
+            params.height = (int) (height * portraitHeightRatio);
+        } else { // Landscape
+            params.width = (int) (width * landscapeWidthRatio);
+            params.height = (int) (height * landscapeHeightRatio);
+        }
+        window.setAttributes(params);
+    }
+
     // Make activity/app not show up in the recents history - call before finish / System.exit
     public <T extends GsContextUtils> T removeActivityFromHistory(final Context activity) {
         try {
@@ -2803,7 +2812,6 @@ public class GsContextUtils {
         int h = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         return h >= begin && h <= end;
     }
-
 
     @SuppressLint("SwitchIntDef")
     public void nextScreenRotationSetting(final Activity context) {
@@ -2858,5 +2866,70 @@ public class GsContextUtils {
             }
         }
         return false;
+    }
+
+    public static void blinkView(final View view) {
+        if (view == null) {
+            return;
+        }
+
+        final ObjectAnimator animator = ObjectAnimator
+                .ofFloat(view, View.ALPHA, 0.2f, 1.0f)
+                .setDuration(500L);
+
+        view.setTag(BLINK_ANIMATOR_TAG, new WeakReference<>(animator));
+
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                view.setAlpha(1.0f);
+                view.setTag(BLINK_ANIMATOR_TAG, null);
+            }
+        });
+
+        animator.start();
+    }
+
+    public static void stopBlinking(final View view) {
+        if (view == null) {
+            return;
+        }
+
+        final Object tagRef = view.getTag(BLINK_ANIMATOR_TAG);
+        if (tagRef instanceof WeakReference) {
+            final Object tag = ((WeakReference<?>) tagRef).get();
+            if (tag instanceof ObjectAnimator) {
+                final ObjectAnimator anim = ((ObjectAnimator) tag);
+                if (anim.isRunning()) {
+                    anim.cancel();
+                }
+            }
+        }
+    }
+
+    public static boolean fadeInOut(final View in, final View out, final boolean animate) {
+        // Do nothing if we are already in the correct state
+        if (in.getVisibility() == View.VISIBLE && out.getVisibility() == View.GONE) {
+            return false;
+        }
+
+        in.setVisibility(View.VISIBLE);
+        if (animate) {
+            in.setAlpha(0);
+            in.animate().alpha(1).setDuration(200).setListener(null);
+            out.animate()
+                    .alpha(0)
+                    .setDuration(200)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            out.setVisibility(View.GONE);
+                        }
+                    });
+        } else {
+            out.setVisibility(View.GONE);
+        }
+
+        return true;
     }
 }

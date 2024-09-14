@@ -1,9 +1,9 @@
 /*#######################################################
  *
- * SPDX-FileCopyrightText: 2019-2023 Gregor Santner <gsantner AT mailbox DOT org>
+ * SPDX-FileCopyrightText: 2019-2024 Gregor Santner <gsantner AT mailbox DOT org>
  * SPDX-License-Identifier: Unlicense OR CC0-1.0
  *
- * Written 2019-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+ * Written 2019-2024 by Gregor Santner <gsantner AT mailbox DOT org>
  * To the extent possible under law, the author(s) have dedicated all copyright and related and neighboring rights to this software to the public domain worldwide. This software is distributed without any warranty.
  * You should have received a copy of the CC0 Public Domain Dedication along with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 #########################################################*/
@@ -11,20 +11,30 @@ package net.gsantner.opoc.format;
 
 import android.util.Base64;
 
+import net.gsantner.opoc.wrapper.GsCallback;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SuppressWarnings({"unused", "SpellCheckingInspection"})
 public class GsTextUtils {
     public static String UTF8 = "UTF-8";
+
+    // Regex patterns used for finding resources in tags
+    public final static Pattern SELF_CLOSING_TAG = Pattern.compile("<(\\w+)([^>]*?)src='([^']+)'([^>]*?)/>");
+    public final static Pattern REGULAR_TAG = Pattern.compile("<(\\w+)([^>]*?)src='([^']+)'([^>]*?)>(.*?)</\\1>");
+
 
     /**
      * This is a simple method that tries to extract an URL around a given index.
@@ -34,26 +44,57 @@ public class GsTextUtils {
      * @param pos  Position to start searching from (backwards)
      * @return Extracted URL or {@code null} if none found
      */
-    public static String tryExtractUrlAroundPos(String text, int pos) {
+    public static String tryExtractUrlAroundPos(final String text, int pos) {
         pos = Math.min(Math.max(0, pos), text.length() - 1);
-        if (pos >= 0 && pos < text.length()) {
-            int begin = Math.max(text.lastIndexOf("https://", pos), text.lastIndexOf("http://", pos));
-            if (begin >= 0) {
-                int end = text.length();
-                for (String check : new String[]{"\n", " ", "\t", "\r", ")", "|"}) {
-                    if ((pos = text.indexOf(check, begin)) > begin && pos < end) {
-                        end = pos;
-                    }
+        int begin = Math.max(text.lastIndexOf("https://", pos), text.lastIndexOf("http://", pos));
+        if (begin >= 0) {
+            int end = text.length();
+            for (final String check : new String[]{"\n", " ", "\t", "\r", ")", "|"}) {
+                if ((pos = text.indexOf(check, begin)) > begin && pos < end) {
+                    end = pos;
                 }
+            }
 
-                if ((end - begin) > 5 && end > 5) {
-                    return text.substring(begin, end).replaceAll("[\\]=%>}]+$", "");
-                }
+            if ((end - begin) > 5) {
+                return text.substring(begin, end).replaceAll("[\\]=%>}]+$", "");
             }
         }
         return null;
     }
 
+
+    /**
+     * This is a simple method that tries to extract the value of the 'src' attribute
+     * for any tag in the text which surrounds pos.
+     * It doesn't do any validation. Separation by whitespace or end.
+     *
+     * @param text Text to extract from
+     * @param pos  Position to start searching from (backwards)
+     * @return Extracted resource path or {@code null} if none found
+     */
+    public static String tryExtractResourceAroundPos(final String text, int pos) {
+
+        for (final Pattern pattern : Arrays.asList(SELF_CLOSING_TAG, REGULAR_TAG)) {
+            final Matcher matcher = pattern.matcher(text);
+            while (matcher.find()) {
+                int start = matcher.start();
+                int end = matcher.end();
+                if (pos >= start && pos <= end) {
+                    return matcher.group(3);
+                }
+            }
+        }
+
+        return null; // Return null if no enclosing tag with src attribute is found
+    }
+
+    /**
+     * find '\n' to the right and left of text[pos] .. text[posEnd].
+     * If left does not exist 0 (begin of text) is used.
+     * if right does not exist text.length() (end of text) is used.
+     *
+     * @return result[0] is left, result[1] is right.
+     */
     public static int[] getNeighbourLineEndings(String text, int pos, int posEnd) {
         final int len = text.length();
 
@@ -82,6 +123,16 @@ public class GsTextUtils {
         return null;
     }
 
+    /**
+     * returns search for begin of line starting for startPosition down to 0
+     */
+    public static int beginOfLine(final String text, int startPosition) {
+        return getNeighbourLineEndings(text, startPosition, startPosition)[0];
+    }
+
+    public static int endOfLine(final String text, int startPosition) {
+        return getNeighbourLineEndings(text, startPosition, startPosition)[1];
+    }
 
     public static String removeLinesOfTextAround(String text, int pos, int posEnd) {
         int[] endings = getNeighbourLineEndings(text, pos, posEnd);
@@ -246,36 +297,6 @@ public class GsTextUtils {
     }
 
     /**
-     * Get a list of values (like np.arange())
-     *
-     * @param ops start, stop and step (all optional)
-     * @return List of integers with values
-     */
-    public static List<Integer> range(final int... ops) {
-        int start = 0, end = 0, step = 1;
-        if (ops != null) {
-            if (ops.length == 1) {
-                end = ops[0];
-            } else if (ops.length == 2) {
-                start = ops[0];
-                end = ops[1];
-            } else if (ops.length >= 3) {
-                start = ops[0];
-                end = ops[1];
-                step = ops[2];
-            }
-        }
-
-        final List<Integer> values = new ArrayList<>();
-        while (start < end) {
-            values.add(start);
-            start += step;
-        }
-
-        return values;
-    }
-
-    /**
      * Count number of instances of 'find' in 'text'
      *
      * @param text Text to search
@@ -289,5 +310,136 @@ public class GsTextUtils {
             count++;
         }
         return count;
+    }
+
+
+    /**
+     * Pad string on left up to size
+     *
+     * @param obj  Converted to string
+     * @param size Total length after padding
+     * @param c    Character to pad with
+     * @return Padded string
+     */
+    public static String padLeft(final Object obj, final int size, final char c) {
+        final String text = obj.toString();
+        return repeatChars(c, size - text.length()) + text;
+    }
+
+    /**
+     * Repeat a char count times
+     *
+     * @param character Char to prepeat
+     * @param count     Times to repeat,
+     * @return String with repeated chars
+     */
+    public static String repeatChars(char character, int count) {
+        final char[] stringChars = new char[count];
+        Arrays.fill(stringChars, character);
+        return new String(stringChars);
+    }
+
+    public static List<Integer> findChar(final CharSequence text, final char c) {
+        return findChar(text, c, 0, text.length());
+    }
+
+    public static List<Integer> findChar(final CharSequence text, final char c, final int start, final int end) {
+        final List<Integer> posns = new ArrayList<>();
+        for (int i = start; i < end; i++) {
+            if (text.charAt(i) == c) {
+                posns.add(i);
+            }
+        }
+        return posns;
+    }
+
+    /**
+     * Iterate over lines in a text
+     *
+     * @param text     Text to iterate over
+     * @param callback Callback to call for each line. Return false to stop iteration.
+     */
+    public static void forEachline(final CharSequence text, GsCallback.b3<Integer, Integer, Integer> callback) {
+        final List<Integer> ends = findChar(text, '\n');
+        int start = 0, i = 0;
+        for (; i < ends.size(); i++) {
+            final int end = ends.get(i);
+            if (!callback.callback(i, start, end)) {
+                break;
+            }
+            start = end + 1;
+        }
+        callback.callback(i, start, text.length());
+    }
+
+
+    public static int[] countChars(final CharSequence s, final char... chars) {
+        return countChars(s, 0, s.length(), chars);
+    }
+
+    /**
+     * Count instances of chars between start and end
+     *
+     * @param s     Sequence to count in
+     * @param start start of section to count within
+     * @param end   end of section to count within
+     * @param chars Array of chars to count
+     * @return number of instances of each char in [start, end)
+     */
+    public static int[] countChars(final CharSequence s, int start, int end, final char... chars) {
+        // Faster specialization for the common single case
+        if (chars.length == 1) {
+            return new int[]{countChar(s, start, end, chars[0])};
+        }
+
+        final int[] counts = new int[chars.length];
+        start = Math.max(0, start);
+        end = Math.min(end, s.length());
+        for (int i = start; i < end; i++) {
+            final char c = s.charAt(i);
+            for (int j = 0; j < chars.length; j++) {
+                if (c == chars[j]) {
+                    counts[j]++;
+                }
+            }
+        }
+        return counts;
+    }
+
+    public static int countChar(final CharSequence s, final char c) {
+        return countChar(s, 0, s.length(), c);
+    }
+
+    /**
+     * Count instances of a single char in a charsequence
+     */
+    public static int countChar(final CharSequence s, int start, int end, final char c) {
+        start = Math.max(0, start);
+        end = Math.min(end, s.length());
+        int count = 0;
+        for (int i = start; i < end; i++) {
+            if (s.charAt(i) == c) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static boolean isNewLine(CharSequence source, int start, int end) {
+        return isValidIndex(source, start, end - 1) && (source.charAt(start) == '\n' || source.charAt(end - 1) == '\n');
+    }
+
+    public static boolean isValidIndex(final CharSequence s, final int... indices) {
+        return s != null && inRange(0, s.length() - 1, indices);
+    }
+
+    // Checks if all values are in [min, max] _inclusive_
+    public static boolean inRange(final int min, final int max, final int... values) {
+        for (final int i : values) {
+            if (i < min || i > max) {
+                return false;
+            }
+        }
+        return true;
     }
 }

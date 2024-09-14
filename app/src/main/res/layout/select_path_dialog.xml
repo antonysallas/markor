@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!--
 /*#######################################################
  *
- *   Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+ *   Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
  *
  *   License of this file: Apache 2.0
  *     https://www.apache.org/licenses/LICENSE-2.0
@@ -50,11 +50,30 @@
             android:text="@string/browse_filesystem" />
 
         <Button
+            android:id="@+id/ui__select_path_dialog__select_special"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_history_black_24dp"
+            android:drawableLeft="@drawable/ic_history_black_24dp"
+            android:visibility="gone"
+            android:text="@string/special_documents" />
+
+        <Button
+            android:id="@+id/ui__select_path_dialog__search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_search_black_24dp"
+            android:drawableLeft="@drawable/ic_search_black_24dp"
+            android:visibility="gone"
+            android:text="@string/search_documents" />
+
+        <Button
             android:id="@+id/ui__select_path_dialog__camera_picture"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_photo_camera_black_24dp"
             android:drawableLeft="@drawable/ic_photo_camera_black_24dp"
+            android:visibility="gone"
             android:text="@string/camera_picture" />
 
         <Button
@@ -63,6 +82,7 @@
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_image_black_24dp"
             android:drawableLeft="@drawable/ic_image_black_24dp"
+            android:visibility="gone"
             android:text="@string/gallery_picture" />
 
         <Button
@@ -71,6 +91,7 @@
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_crop_black_24dp"
             android:drawableLeft="@drawable/ic_crop_black_24dp"
+            android:visibility="gone"
             android:text="@string/edit_picture" />
 
         <Button
@@ -79,6 +100,7 @@
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_keyboard_voice_black_24dp"
             android:drawableLeft="@drawable/ic_keyboard_voice_black_24dp"
+            android:visibility="gone"
             android:text="@string/record_audio" />
     </LinearLayout>
 

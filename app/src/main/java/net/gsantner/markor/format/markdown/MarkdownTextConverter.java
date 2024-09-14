@@ -1,6 +1,6 @@
 /*#######################################################
  *
- *   Maintained 2018-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+ *   Maintained 2018-2024 by Gregor Santner <gsantner AT mailbox DOT org>
  *   License of this file: Apache 2.0
  *     https://www.apache.org/licenses/LICENSE-2.0
  *
@@ -10,15 +10,13 @@ package net.gsantner.markor.format.markdown;
 import android.content.Context;
 import android.text.TextUtils;
 
-import androidx.annotation.NonNull;
-
 import com.vladsch.flexmark.ext.admonition.AdmonitionExtension;
 import com.vladsch.flexmark.ext.anchorlink.AnchorLinkExtension;
 import com.vladsch.flexmark.ext.autolink.AutolinkExtension;
 import com.vladsch.flexmark.ext.emoji.EmojiExtension;
 import com.vladsch.flexmark.ext.emoji.EmojiImageType;
 import com.vladsch.flexmark.ext.footnotes.FootnoteExtension;
-import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension;
+import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughSubscriptExtension;
 import com.vladsch.flexmark.ext.gfm.tasklist.TaskListExtension;
 import com.vladsch.flexmark.ext.gitlab.GitLabExtension;
 import com.vladsch.flexmark.ext.ins.InsExtension;
@@ -32,10 +30,18 @@ import com.vladsch.flexmark.ext.typographic.TypographicExtension;
 import com.vladsch.flexmark.ext.wikilink.WikiLinkExtension;
 import com.vladsch.flexmark.ext.yaml.front.matter.AbstractYamlFrontMatterVisitor;
 import com.vladsch.flexmark.ext.yaml.front.matter.YamlFrontMatterExtension;
+import com.vladsch.flexmark.html.AttributeProvider;
+import com.vladsch.flexmark.html.AttributeProviderFactory;
 import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.html.renderer.AttributablePart;
+import com.vladsch.flexmark.html.renderer.LinkResolverContext;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.superscript.SuperscriptExtension;
+import com.vladsch.flexmark.util.ast.Document;
+import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.builder.Extension;
+import com.vladsch.flexmark.util.html.Attributes;
+import com.vladsch.flexmark.util.options.MutableDataHolder;
 import com.vladsch.flexmark.util.options.MutableDataSet;
 
 import net.gsantner.markor.R;
@@ -49,11 +55,11 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import other.com.vladsch.flexmark.ext.katex.FlexmarkKatexExtension;
-import other.de.stanetz.jpencconverter.JavaPasswordbasedCryption;
 
 @SuppressWarnings({"unchecked", "WeakerAccess"})
 public class MarkdownTextConverter extends TextConverterBase {
@@ -84,6 +90,7 @@ public class MarkdownTextConverter extends TextConverterBase {
     //########################
     //## Injected CSS / JS / HTML
     //########################
+    public static final String CSS_BODY = CSS_S + "body{margin:0;padding:0.25vh 3.5vw}" + CSS_E;
     public static final String CSS_HEADER_UNDERLINE = CSS_S + " .header_no_underline { text-decoration: none; color: " + TOKEN_BW_INVERSE_OF_THEME + "; } h1 < a.header_no_underline { border-bottom: 2px solid #eaecef; } " + CSS_E;
     public static final String CSS_H1_H2_UNDERLINE = CSS_S + " h1,h2 { border-bottom: 2px solid " + TOKEN_BW_INVERSE_OF_THEME_HEADER_UNDERLINE + "; } " + CSS_E;
     public static final String CSS_BLOCKQUOTE_VERTICAL_LINE = CSS_S + "blockquote{padding:0px 14px;border-" + TOKEN_TEXT_DIRECTION + ":3.5px solid #dddddd;margin:4px 0}" + CSS_E;
@@ -96,13 +103,18 @@ public class MarkdownTextConverter extends TextConverterBase {
     public static final String HTML_PRESENTATION_BEAMER_SLIDE_START_DIV = "<!-- Presentation slide NO --> <div class='slide_pNO slide'><div class='slide_body'>";
     public static final String TOKEN_SITE_DATE_JEKYLL = "{{ site.time | date: '%x' }}";
 
-    public static final String HTML_KATEX_INCLUDE = "<link rel='stylesheet'  type='text/css' href='file:///android_asset/katex/katex.min.css'>" +
-            "<script src='file:///android_asset/katex/katex.min.js'></script>" +
-            "<script src='file:///android_asset/katex/katex-render.js'></script>" +
-            "<script src='file:///android_asset/katex/mhchem.min.js'></script>";
+    private static final String CSS_PREFIX = "<link rel='stylesheet' href='file:///android_asset/";
+    private static final String CSS_POSTFIX = "'/>";
+    private static final String JS_PREFIX = "<script src='file:///android_asset/";
+    private static final String JS_POSTFIX = "'></script>";
+
+    public static final String HTML_KATEX_INCLUDE = CSS_PREFIX + "katex/katex.min.css" + CSS_POSTFIX +
+            JS_PREFIX + "katex/katex.min.js" + JS_POSTFIX +
+            JS_PREFIX + "katex/katex-render.js" + JS_POSTFIX +
+            JS_PREFIX + "katex/mhchem.min.js" + JS_POSTFIX;
     public static final String CSS_KATEX = CSS_S + ".katex { font-size: inherit; }" + CSS_E;
 
-    public static final String HTML_MERMAID_INCLUDE = "<script src='file:///android_asset/mermaid/mermaid.min.js'></script>";
+    public static final String HTML_MERMAID_INCLUDE = JS_PREFIX + "mermaid/mermaid.min.js" + JS_POSTFIX;
 
     public static final String HTML_FRONTMATTER_CONTAINER_S = "<div class='front-matter-container'>";
     public static final String HTML_FRONTMATTER_CONTAINER_E = "</div>";
@@ -116,8 +128,8 @@ public class MarkdownTextConverter extends TextConverterBase {
     public static final String YAML_FRONTMATTER_SCOPES = "post"; //, page, site";
     public static final Pattern YAML_FRONTMATTER_TOKEN_PATTERN = Pattern.compile("\\{\\{\\s+(?:" + YAML_FRONTMATTER_SCOPES.replaceAll(",\\s*", "|") + ")\\.[A-Za-z0-9]+\\s+\\}\\}");
 
-    public static final String HTML_ADMONITION_INCLUDE = "<link rel='stylesheet'  type='text/css' href='file:///android_asset/flexmark/admonition.css'>" +
-            "<script src='file:///android_asset/flexmark/admonition.js'></script>";
+    public static final String HTML_ADMONITION_INCLUDE = CSS_PREFIX + "flexmark/admonition.css" + CSS_POSTFIX +
+            JS_PREFIX + "flexmark/admonition.js" + JS_POSTFIX;
     public static final String CSS_ADMONITION = CSS_S + ".adm-block { width: initial; font-size: 90%; text-indent: 0em; } .adm-heading { height: auto; padding-top: 0.4em; padding-left: 2.2em; padding-bottom: 0.4em; } .adm-body { padding-top: 0.25em; padding-bottom: 0.25em; margin-left: 0.5em; margin-right: 0.5em; } .adm-icon { position: absolute; top: 50%; left: 0.5em; transform: translateY(-50%); } .adm-block > .adm-heading { position: relative; cursor: pointer; } .adm-block.adm-open > .adm-heading:after, .adm-block.adm-collapsed > .adm-heading:after { top: 50%; transform: translateY(-50%); content: '▼'; } .adm-block.adm-collapsed > .adm-heading:after { content: '◀'; } pre + div.adm-block, div.adm-block + pre { margin-top: 1.75em; }" + CSS_E;
 
     //########################
@@ -125,7 +137,7 @@ public class MarkdownTextConverter extends TextConverterBase {
     //########################
     // See https://github.com/vsch/flexmark-java/wiki/Extensions#tables
     private static final List<Extension> flexmarkExtensions = Arrays.asList(
-            StrikethroughExtension.create(),
+            StrikethroughSubscriptExtension.create(),
             AutolinkExtension.create(),
             InsExtension.create(),
             FlexmarkKatexExtension.KatexExtension.create(),
@@ -143,29 +155,39 @@ public class MarkdownTextConverter extends TextConverterBase {
             TypographicExtension.create(),        // https://github.com/vsch/flexmark-java/wiki/Typographic-Extension
             GitLabExtension.create(),             // https://github.com/vsch/flexmark-java/wiki/Extensions#gitlab-flavoured-markdown
             AdmonitionExtension.create(),         // https://github.com/vsch/flexmark-java/wiki/Extensions#admonition
-            FootnoteExtension.create()            // https://github.com/vsch/flexmark-java/wiki/Footnotes-Extension#overview
+            FootnoteExtension.create(),            // https://github.com/vsch/flexmark-java/wiki/Footnotes-Extension#overview
+            LineNumberIdExtension.create()
     );
     public static final Parser flexmarkParser = Parser.builder().extensions(flexmarkExtensions).build();
     public static final HtmlRenderer flexmarkRenderer = HtmlRenderer.builder().extensions(flexmarkExtensions).build();
 
     //########################
+    //## Others
+    //########################
+    private static String toDashChars = " -_"; // See HtmlRenderer.HEADER_ID_GENERATOR_TO_DASH_CHARS.getFrom(document)
+    private static final Pattern linkPattern = Pattern.compile("\\[(.*?)\\]\\((.*?)(\\s+\".*\")?\\)");
+
+
+    //########################
     //## Methods
     //########################
-
     @Override
-    public String convertMarkup(String markup, Context context, boolean isExportInLightMode, File file) {
-        String converted = "", onLoadJs = "", head = "";
+    public String convertMarkup(String markup, Context context, boolean lightMode, boolean enableLineNumbers, File file) {
+        String converted, onLoadJs = "", head = "";
+        final MutableDataSet options = new MutableDataSet();
 
-        MutableDataSet options = new MutableDataSet();
         options.set(Parser.EXTENSIONS, flexmarkExtensions);
-        options.set(Parser.SPACE_IN_LINK_URLS, true); // allow links like [this](some filename with spaces.md)
-        //options.set(HtmlRenderer.SOFT_BREAK, "<br />\n"); // Add linefeed to html break
+
+        options.set(Parser.SPACE_IN_LINK_URLS, true); // Allow links like [this](some filename with spaces.md)
+
+        // options.set(HtmlRenderer.SOFT_BREAK, "<br />\n"); // Add linefeed to HTML break
+
         options.set(EmojiExtension.USE_IMAGE_TYPE, EmojiImageType.UNICODE_ONLY); // Use unicode (OS/browser images)
 
         // GitLab extension
         options.set(GitLabExtension.RENDER_BLOCK_MATH, false);
 
-        // gfm table parsing
+        // GFM table parsing
         options.set(TablesExtension.WITH_CAPTION, false)
                 .set(TablesExtension.COLUMN_SPANS, true)
                 .set(TablesExtension.MIN_HEADER_ROWS, 0)
@@ -177,9 +199,11 @@ public class MarkdownTextConverter extends TextConverterBase {
 
         // Add id to headers
         options.set(HtmlRenderer.GENERATE_HEADER_ID, true)
-                .set(AnchorLinkExtension.ANCHORLINKS_WRAP_TEXT, true)
+                .set(HtmlRenderer.HEADER_ID_GENERATOR_RESOLVE_DUPES, true)
+                .set(AnchorLinkExtension.ANCHORLINKS_SET_ID, false)
                 .set(AnchorLinkExtension.ANCHORLINKS_ANCHOR_CLASS, "header_no_underline");
 
+        head += CSS_BODY;
         // Prepare head and javascript calls
         head += CSS_HEADER_UNDERLINE + CSS_H1_H2_UNDERLINE + CSS_BLOCKQUOTE_VERTICAL_LINE + CSS_GITLAB_VIDEO_CAPTION + CSS_LIST_TASK_NO_BULLET + CSS_LINK_SOFT_WRAP_AUTOBREAK_LINES;
 
@@ -189,7 +213,7 @@ public class MarkdownTextConverter extends TextConverterBase {
             head += CSS_PRESENTATION_BEAMER;
         }
 
-        // Frontmatter
+        // Front matter
         String fmaText = "";
         final List<String> fmaAllowedAttributes = _appSettings.getMarkdownShownYamlFrontMatterKeys();
         Map<String, List<String>> fma = Collections.EMPTY_MAP;
@@ -248,9 +272,20 @@ public class MarkdownTextConverter extends TextConverterBase {
             head += CSS_KATEX;
         }
 
+        // Enable View (block) code syntax highlighting
+        if (markup.contains("```")) {
+            head += getViewHlPrismIncludes(GsContextUtils.instance.isDarkModeEnabled(context) ? "-tomorrow" : "", enableLineNumbers);
+            if (_appSettings.getDocumentWrapState(file.getAbsolutePath())) {
+                onLoadJs += "wrapCodeBlockWords();";
+            }
+        }
+
         // Enable Mermaid
         if (markup.contains("```mermaid")) {
-            head += HTML_MERMAID_INCLUDE;
+            head += HTML_MERMAID_INCLUDE
+                    + "<script>mermaid.initialize({theme:'"
+                    + (GsContextUtils.instance.isDarkModeEnabled(context) ? "dark" : "default")
+                    + "',logLevel:5,securityLevel:'loose'});</script>";
         }
 
         // Enable flexmark Admonition support
@@ -258,10 +293,6 @@ public class MarkdownTextConverter extends TextConverterBase {
             head += HTML_ADMONITION_INCLUDE;
             head += CSS_ADMONITION;
         }
-
-        // Enable View (block) code syntax highlighting
-        final String xt = getViewHlPrismIncludes(context, (GsContextUtils.instance.isDarkModeEnabled(context) ? "-tomorrow" : ""));
-        head += xt;
 
         // Jekyll: Replace {{ site.baseurl }} with ..--> usually used in Jekyll blog _posts folder which is one folder below repository root, for reference to e.g. pictures in assets folder
         markup = markup.replace("{{ site.baseurl }}", "..").replace(TOKEN_SITE_DATE_JEKYLL, TOKEN_POST_TODAY_DATE);
@@ -283,11 +314,10 @@ public class MarkdownTextConverter extends TextConverterBase {
             fmaText = HTML_FRONTMATTER_CONTAINER_S + fmaText + HTML_FRONTMATTER_CONTAINER_E + "\n";
         }
 
-
         ////////////
         // Markup parsing - afterwards = HTML
-        converted = flexmarkRenderer.withOptions(options).render(flexmarkParser.parse(markup));
-        converted = fmaText + converted;
+        Document document = flexmarkParser.parse(markup);
+        converted = fmaText + flexmarkRenderer.withOptions(options).render(document);
 
         // After render changes: Fixes for Footnotes (converter creates footnote + <br> + ref#(click) --> remove line break)
         if (converted.contains("footnote-")) {
@@ -310,18 +340,20 @@ public class MarkdownTextConverter extends TextConverterBase {
             }
         }
 
-        // Deliver result
-        return putContentIntoTemplate(context, converted, isExportInLightMode, file, onLoadJs, head);
-    }
+        if (enableLineNumbers) {
+            // For Prism line numbers plugin
+            onLoadJs += "enableLineNumbers(); adjustLineNumbers();";
+        }
 
-    private static final Pattern linkPattern = Pattern.compile("\\[(.*?)\\]\\((.*?)(\\s+\".*\")?\\)");
+        // Deliver result
+        return putContentIntoTemplate(context, converted, lightMode, file, onLoadJs, head);
+    }
 
     private String escapeSpacesInLink(final String markup) {
         final Matcher matcher = linkPattern.matcher(markup);
         if (!matcher.find()) {
             return markup;
         }
-
         // 1) Walk through the text till finding a link in markdown syntax
         // 2) Add all text-before-link to buffer
         // 3) Extract [title](link to somehere)
@@ -347,33 +379,30 @@ public class MarkdownTextConverter extends TextConverterBase {
     }
 
     @SuppressWarnings({"StringConcatenationInsideStringBufferAppend"})
-    private String getViewHlPrismIncludes(@NonNull final Context context, final String themeName) {
-        final StringBuilder sb = new StringBuilder(1500);
-        final String js_prefix = "<script type='text/javascript' src='file:///android_asset/prism/";
-        sb.append("\n\n");
-        sb.append("<link rel='stylesheet' href='file:///android_asset/prism/prism" + themeName + ".min.css' /> ");
-        sb.append(js_prefix + "prism.min.js'></script> ");
-        sb.append(js_prefix + "prism-markup-templating.min.js'></script> ");
-        try {
-            for (String lang : context.getAssets().list("prism")) {
-                if (!lang.endsWith(".js") || lang.contains("prism.min.js") || lang.contains("prism-markup-templating.min.js")) {
-                    continue;
-                }
-                sb.append(js_prefix);
-                sb.append(lang);
-                sb.append("'></script> ");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    private String getViewHlPrismIncludes(final String theme, final boolean isLineNumbersEnabled) {
+        final StringBuilder sb = new StringBuilder(1000);
+        sb.append(CSS_PREFIX + "prism/themes/prism" + theme + ".min.css" + CSS_POSTFIX);
+        sb.append(CSS_PREFIX + "prism/style.css" + CSS_POSTFIX);
+        sb.append(CSS_PREFIX + "prism/plugins/toolbar/prism-toolbar.css" + CSS_POSTFIX);
+
+        sb.append(JS_PREFIX + "prism/prism.js" + JS_POSTFIX);
+        sb.append(JS_PREFIX + "prism/main.js" + JS_POSTFIX);
+        sb.append(JS_PREFIX + "prism/plugins/autoloader/prism-autoloader.min.js" + JS_POSTFIX);
+        sb.append(JS_PREFIX + "prism/plugins/toolbar/prism-toolbar.min.js" + JS_POSTFIX);
+        sb.append(JS_PREFIX + "prism/plugins/copy-to-clipboard/prism-copy-to-clipboard.js" + JS_POSTFIX);
+
+        if (isLineNumbersEnabled) {
+            sb.append(CSS_PREFIX + "prism/plugins/line-numbers/style.css" + CSS_POSTFIX);
+            sb.append(JS_PREFIX + "prism/plugins/line-numbers/prism-line-numbers.min.js" + JS_POSTFIX);
+            sb.append(JS_PREFIX + "prism/plugins/line-numbers/main.js" + JS_POSTFIX);
         }
-        sb.append("\n\n");
+
         return sb.toString();
     }
 
     @Override
-    protected boolean isFileOutOfThisFormat(String filepath, String extWithDot) {
-        filepath = filepath.replace(JavaPasswordbasedCryption.DEFAULT_ENCRYPTION_EXTENSION, "");
-        return (MarkdownTextConverter.PATTERN_HAS_FILE_EXTENSION_FOR_THIS_FORMAT.matcher(filepath).matches() && !filepath.toLowerCase().endsWith(".txt")) || filepath.toLowerCase().endsWith(".md.txt");
+    protected boolean isFileOutOfThisFormat(final File file, final String name, final String ext) {
+        return (MarkdownTextConverter.PATTERN_HAS_FILE_EXTENSION_FOR_THIS_FORMAT.matcher(name).matches() && !name.endsWith(".txt")) || name.endsWith(".md.txt");
     }
 
     private Map<String, List<String>> extractYamlAttributes(final String markup) {
@@ -419,5 +448,55 @@ public class MarkdownTextConverter extends TextConverterBase {
         }
 
         return markupReplaced;
+    }
+
+    // Extension to add line numbers to headings
+    // ---------------------------------------------------------------------------------------------
+
+    private static class LineNumberIdProvider implements AttributeProvider {
+        @Override
+        public void setAttributes(Node node, AttributablePart part, Attributes attributes) {
+            final Document document = node.getDocument();
+            final int lineNumber = document.getLineNumber(node.getStartOffset());
+            attributes.addValue("line", "" + lineNumber);
+        }
+    }
+
+    private static class LineNumberIdProviderFactory implements AttributeProviderFactory {
+
+        @Override
+        public Set<Class<? extends AttributeProviderFactory>> getAfterDependents() {
+            return null;
+        }
+
+        @Override
+        public Set<Class<? extends AttributeProviderFactory>> getBeforeDependents() {
+            return null;
+        }
+
+        @Override
+        public boolean affectsGlobalScope() {
+            return false;
+        }
+
+        @Override
+        public AttributeProvider create(LinkResolverContext context) {
+            return new LineNumberIdProvider();
+        }
+    }
+
+    private static class LineNumberIdExtension implements HtmlRenderer.HtmlRendererExtension {
+        @Override
+        public void rendererOptions(MutableDataHolder options) {
+        }
+
+        @Override
+        public void extend(HtmlRenderer.Builder rendererBuilder, String rendererType) {
+            rendererBuilder.attributeProviderFactory(new LineNumberIdProviderFactory());
+        }
+
+        public static HtmlRenderer.HtmlRendererExtension create() {
+            return new LineNumberIdExtension();
+        }
     }
 }

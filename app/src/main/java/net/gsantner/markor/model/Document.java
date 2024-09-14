@@ -1,6 +1,6 @@
 /*#######################################################
  *
- *   Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+ *   Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
  *   License of this file: Apache 2.0
  *     https://www.apache.org/licenses/LICENSE-2.0
  *
@@ -49,7 +49,7 @@ public class Document implements Serializable {
 
     private static final String MOD_PREF_NAME = "DOCUMENT_MOD_TIMES";
     public static final String EXTRA_DOCUMENT = "EXTRA_DOCUMENT"; // Document
-    public static final String EXTRA_PATH = "EXTRA_PATH"; // java.io.File
+    public static final String EXTRA_FILE = "EXTRA_FILE"; // java.io.File
     public static final String EXTRA_FILE_LINE_NUMBER = "EXTRA_FILE_LINE_NUMBER"; // int
     public static final int EXTRA_FILE_LINE_NUMBER_LAST = -919385553; // Flag for last line
 
@@ -75,22 +75,16 @@ public class Document implements Serializable {
         _fileExtension = GsFileUtils.getFilenameExtension(_file);
 
         // Set initial format
-        final String fnlower = _file.getName().toLowerCase();
-        if (FormatRegistry.CONVERTER_TODOTXT.isFileOutOfThisFormat(fnlower)) {
-            setFormat(FormatRegistry.FORMAT_TODOTXT);
-        } else if (FormatRegistry.CONVERTER_KEYVALUE.isFileOutOfThisFormat(fnlower)) {
-            setFormat(FormatRegistry.FORMAT_KEYVALUE);
-        } else if (FormatRegistry.CONVERTER_MARKDOWN.isFileOutOfThisFormat(fnlower)) {
-            setFormat(FormatRegistry.FORMAT_MARKDOWN);
-        } else if (FormatRegistry.CONVERTER_ASCIIDOC.isFileOutOfThisFormat(fnlower)) {
-            setFormat(FormatRegistry.FORMAT_ASCIIDOC);
-        } else if (FormatRegistry.CONVERTER_WIKITEXT.isFileOutOfThisFormat(getPath())) {
-            setFormat(FormatRegistry.FORMAT_WIKITEXT);
-        } else if (FormatRegistry.CONVERTER_EMBEDBINARY.isFileOutOfThisFormat(getPath())) {
-            setFormat(FormatRegistry.FORMAT_EMBEDBINARY);
-        } else {
-            setFormat(FormatRegistry.FORMAT_PLAIN);
+        for (final FormatRegistry.Format format : FormatRegistry.FORMATS) {
+            if (format.converter == null || format.converter.isFileOutOfThisFormat(_file)) {
+                setFormat(format.format);
+                break;
+            }
         }
+    }
+
+    public static String getPath(final File file) {
+        return file != null ? file.getAbsolutePath() : "";
     }
 
     // Get a default file
@@ -199,7 +193,7 @@ public class Document implements Serializable {
     }
 
     public boolean isBinaryFileNoTextLoading() {
-        return _file != null && FormatRegistry.CONVERTER_EMBEDBINARY.isFileOutOfThisFormat(_file.getAbsolutePath());
+        return _file != null && FormatRegistry.CONVERTER_EMBEDBINARY.isFileOutOfThisFormat(_file);
     }
 
     public boolean isEncrypted() {
@@ -233,7 +227,8 @@ public class Document implements Serializable {
             } catch (FileNotFoundException e) {
                 Log.e(Document.class.getName(), "loadDocument:  File " + _file + " not found.");
                 content = "";
-            } catch (JavaPasswordbasedCryption.EncryptionFailedException | IllegalArgumentException e) {
+            } catch (JavaPasswordbasedCryption.EncryptionFailedException |
+                     IllegalArgumentException e) {
                 Toast.makeText(context, R.string.could_not_decrypt_file_content_wrong_password_or_is_the_file_maybe_not_encrypted, Toast.LENGTH_LONG).show();
                 Log.e(Document.class.getName(), "loadDocument:  decrypt failed for File " + _file + ". " + e.getMessage(), e);
                 content = "";
@@ -293,8 +288,7 @@ public class Document implements Serializable {
     public static boolean testCreateParent(final File file) {
         try {
             final File parent = file.getParentFile();
-            boolean ok = parent != null && (parent.exists() || parent.mkdirs());
-            return ok;
+            return parent != null && (parent.exists() || parent.mkdirs());
         } catch (NullPointerException e) {
             return false;
         }
@@ -349,6 +343,7 @@ public class Document implements Serializable {
                         if (isContentResolverProxyFile) {
                             GsFileUtils.writeFile(_file, contentAsBytes, _fileInfo);
                         }
+
                     } catch (Exception e) {
                         Log.i(Document.class.toString(), e.getMessage());
                     }

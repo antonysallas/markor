@@ -1,25 +1,26 @@
 /*#######################################################
  *
- * SPDX-FileCopyrightText: 2017-2023 Gregor Santner <gsantner AT mailbox DOT org>
+ * SPDX-FileCopyrightText: 2017-2024 Gregor Santner <gsantner AT mailbox DOT org>
  * SPDX-License-Identifier: Unlicense OR CC0-1.0
  *
- * Written 2018-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+ * Written 2018-2024 by Gregor Santner <gsantner AT mailbox DOT org>
  * To the extent possible under law, the author(s) have dedicated all copyright and related and neighboring rights to this software to the public domain worldwide. This software is distributed without any warranty.
  * You should have received a copy of the CC0 Public Domain Dedication along with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 #########################################################*/
 package net.gsantner.opoc.util;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import net.gsantner.opoc.format.GsTextUtils;
-import net.gsantner.opoc.wrapper.GsCallback;
-import net.gsantner.opoc.wrapper.GsFileWithMetadataCache;
-import net.gsantner.opoc.wrapper.GsHashMap;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -36,7 +37,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
@@ -45,11 +53,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.zip.CRC32;
@@ -61,8 +70,8 @@ public class GsFileUtils {
     public final static SimpleDateFormat DATEFORMAT_IMG = new SimpleDateFormat("yyyyMMdd-HHmmss", INITIAL_LOCALE); //20190511-230845
 
     // Used on methods like copyFile(src, dst)
-    private static final int BUFFER_SIZE = 4096;
-    private static final GsHashMap<String, String> MIME_TYPE_CACHE = new GsHashMap<>();
+    private final static int BUFFER_SIZE = 4096;
+    private final static Map<String, String> MIME_TYPE_CACHE = new ConcurrentHashMap<>();
 
     /**
      * Info of various types about a file
@@ -72,14 +81,15 @@ public class GsFileUtils {
         public boolean ioError = false;
     }
 
-    public static Pair<String, FileInfo> readTextFileFast(final File file) {
-        final FileInfo info = new FileInfo();
+    public static Pair<String, FileInfo> readInputStreamFast(final InputStream inputStream, @Nullable FileInfo info) {
+        info = info == null ? new FileInfo() : info;
 
-        try (final FileInputStream inputStream = new FileInputStream(file)) {
+        try {
             final ByteArrayOutputStream result = new ByteArrayOutputStream();
 
             final byte[] bomBuffer = new byte[3];
             final int bomReadLength = inputStream.read(bomBuffer);
+
             info.hasBom = bomReadLength == 3 &&
                     bomBuffer[0] == (byte) 0xEF &&
                     bomBuffer[1] == (byte) 0xBB &&
@@ -97,10 +107,23 @@ public class GsFileUtils {
                 result.write(buffer, 0, length);
             }
             return new Pair<>(result.toString("UTF-8"), info);
+        } catch (IOException e) {
+            e.printStackTrace();
+            info.ioError = true;
+        }
+
+        return new Pair<>("", info);
+    }
+
+    public static Pair<String, FileInfo> readTextFileFast(final File file) {
+        final FileInfo info = new FileInfo();
+
+        try (final FileInputStream inputStream = new FileInputStream(file)) {
+            return readInputStreamFast(inputStream, info);
         } catch (FileNotFoundException e) {
             System.err.println("readTextFileFast: File " + file + " not found.");
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("readTextFileFast: File " + file + " could not be read.");
             info.ioError = true;
         }
 
@@ -267,6 +290,7 @@ public class GsFileUtils {
                     is.close();
                 }
                 if (os != null) {
+                    os.flush();
                     os.close();
                 }
             }
@@ -420,7 +444,7 @@ public class GsFileUtils {
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
-    private final static GsCallback.s1<File> gatherMimeType = file -> {
+    private static String gatherMimeType(final File file) {
         if (file == null) {
             return "*/*";
         }
@@ -482,27 +506,44 @@ public class GsFileUtils {
         } catch (Exception ignored) {
         }
         return "*/*";
-    };
+    }
 
     /**
      * Try to detect MimeType by backwards compatible methods
      * Android/Java's own MimeType mapping support is small and detection barely works at all
      * Hence use custom map for some file extensions
      */
-    public static String getMimeType(File file) {
-        MIME_TYPE_CACHE.limitSizeByRemovingOldest(350);
+    public static String getMimeType(final File file) {
         final String fp = file.getAbsolutePath();
-        String mime = MIME_TYPE_CACHE.getOrDefault(fp, null);
+        String mime = MIME_TYPE_CACHE.get(fp);
         if (mime == null) {
-            mime = gatherMimeType.callback(file);
-            MIME_TYPE_CACHE.add(fp, mime);
+            mime = gatherMimeType(file);
+            MIME_TYPE_CACHE.put(fp, mime);
         }
         return mime;
     }
 
-    public static boolean isTextFile(File file) {
+    public static boolean isTextFile(final File file) {
         final String mime = getMimeType(file);
-        return mime != null && mime.startsWith("text/");
+        return mime != null && (mime.startsWith("text/") || mime.contains("xml")) && !mime.contains("openxml");
+    }
+
+    /**
+     * Reads the first kb of a file and checks if it is likely a text file
+     **/
+    public static boolean isContentsPlainText(final File file) {
+        // Empty files are considered text files
+        if (file.length() == 0) {
+            return true;
+        }
+
+        try (final FileInputStream fis = new FileInputStream(file)) {
+            final byte[] bytes = readCloseStreamWithSize(fis, 1024);
+            Charset.forName("UTF-8").newDecoder().decode(java.nio.ByteBuffer.wrap(bytes));
+            return true;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     /**
@@ -647,9 +688,12 @@ public class GsFileUtils {
 
     // Get the title of the file
     public static String getFilenameWithoutExtension(final File file) {
-        final String name = file.getName();
-        final int doti = name.lastIndexOf(".");
-        return (doti < 0) ? name : name.substring(0, doti);
+        return getNameWithoutExtension(file.getName());
+    }
+
+    public static String getNameWithoutExtension(final String fileName) {
+        final int doti = fileName.lastIndexOf(".");
+        return (doti < 0) ? fileName : fileName.substring(0, doti);
     }
 
     /// Get the file extension of the file, including dot
@@ -687,85 +731,59 @@ public class GsFileUtils {
         return filename;
     }
 
+    public static String getPrefix(final String name) {
+        return name.split("_")[0];
+    }
 
     public static final String SORT_BY_NAME = "NAME", SORT_BY_FILESIZE = "FILESIZE", SORT_BY_MTIME = "MTIME", SORT_BY_MIMETYPE = "MIMETYPE";
 
-    public static Comparator<File> makeSortFileByComparator(final String sortBy, final boolean sortReverse) {
-        return (current, other) -> {
-            if (sortReverse) {
-                File swap = current;
-                current = other;
-                other = swap;
+    /**
+     * Get a key which can be use to sort File objects
+     * This is highly performant as each file is processed exactly once.
+     * Inspired by python's sort
+     *
+     * @param sortBy String key of what to sort
+     * @param file   The file object to get the
+     * @return A key which can be used for comparisons / sorting
+     */
+    private static String makeSortKey(final String sortBy, final File file) {
+        final String name = file.getName().toLowerCase();
+        switch (sortBy) {
+            case SORT_BY_MTIME: {
+                return file.lastModified() + name;
             }
-
-            switch (sortBy) {
-                case SORT_BY_MTIME: {
-                    return Long.compare(other.lastModified(), current.lastModified());
-                }
-                case SORT_BY_FILESIZE: {
-                    return Long.compare(other.length(), current.length());
-                }
-                case SORT_BY_NAME: {
-                    return current.getName().compareToIgnoreCase(other.getName());
-                }
-                case SORT_BY_MIMETYPE: {
-                    String mic = getMimeType(current), mio = getMimeType(other);
-                    return !mic.equalsIgnoreCase(mio) ? mic.compareToIgnoreCase(mio) : current.getName().compareToIgnoreCase(other.getName());
-                }
+            case SORT_BY_FILESIZE: {
+                return String.format("%015d", file.length()) + name;
             }
-            return current.compareTo(other);
-        };
+            case SORT_BY_MIMETYPE: {
+                return getMimeType(file).toLowerCase() + name;
+            }
+            case SORT_BY_NAME:
+            default: {
+                return name;
+            }
+        }
     }
 
-    public static Pair<List<File>, Comparator<File>> sortFiles(final List<File> filesToSort, final String sortBy, final boolean sortFolderFirst, final boolean sortReverse) {
-        final Comparator<File> detailComparator = makeSortFileByComparator(sortBy, sortReverse);
-
-        final Comparator<File> mainComparator = (current, other) -> {
-            if (current == null || other == null) {
-                return 0;
-            } else if (current.isDirectory() && sortFolderFirst) {
-                return other.isDirectory() ? detailComparator.compare(current, other) : -1;
-            } else if (other.isDirectory() && sortFolderFirst) {
-                return 1;
-            }
-            int v = detailComparator.compare(current, other);
-            if (v != 0) {
-                return v;
-            }
-            return current.getName().compareToIgnoreCase(other.getName());
-        };
-
-        if (filesToSort != null) {
+    public static void sortFiles(
+            final List<File> filesToSort,
+            final String sortBy,
+            final boolean folderFirst,
+            final boolean reverse
+    ) {
+        if (filesToSort != null && !filesToSort.isEmpty()) {
             try {
-                Collections.sort(filesToSort, mainComparator);
+                GsCollectionUtils.keySort(filesToSort, (f) -> makeSortKey(sortBy, f));
+                if (reverse) {
+                    Collections.reverse(filesToSort);
+                }
+                if (folderFirst) {
+                    GsCollectionUtils.keySort(filesToSort, (f) -> !f.isDirectory());
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return new Pair<>(filesToSort, mainComparator);
-    }
-
-    public static List<File> replaceFilesWithCachedVariants(@Nullable final File[] files) {
-        ArrayList<File> list = new ArrayList<>(Arrays.asList(files != null ? files : new File[0]));
-        return replaceFilesWithCachedVariants(list);
-    }
-
-    /**
-     * Optimization: convert {@link File}s to FileWithCachedData
-     * For example sorting invokes a lot of filesystem i/o calls which comes with performance penalty
-     */
-    public static List<File> replaceFilesWithCachedVariants(@Nullable List<File> files) {
-        files = (files == null ? new ArrayList<>() : files);
-
-        for (int i = 0; i < files.size(); i++) {
-            if (files.get(i) instanceof GsFileWithMetadataCache) {
-                continue;
-            }
-            final File o = files.remove(i);
-            final int at = files.indexOf(o);
-            files.add(i, at >= 0 ? files.get(at) : new GsFileWithMetadataCache(o));
-        }
-        return files;
     }
 
     /**
@@ -780,12 +798,16 @@ public class GsFileUtils {
     }
 
     /**
-     * Check if a file can be created (parent exists and can be written)
+     * Check if a file can be created.
+     * Checks if closest ancestor is writeable.
      */
-    public static boolean canCreate(final File file) {
-        return isWritable(file) || isWritable(file.getParentFile());
+    public static boolean canCreate(File file) {
+        // A file is creatable if the first existing ancestor is writeable
+        while (file != null && !file.exists()) {
+            file = file.getParentFile();
+        }
+        return isWritable(file);
     }
-
 
     /**
      * Check if file is child of folder. A folder is not its own child.
@@ -795,7 +817,7 @@ public class GsFileUtils {
      * @return if parent is a child of test
      */
     public static boolean isChild(final File parent, File test) {
-        if (parent.equals(test)) {
+        if (test == null || parent == null || parent.equals(test)) {
             return false;
         }
 
@@ -811,5 +833,85 @@ public class GsFileUtils {
         } while (test != null);
 
         return false;
+    }
+
+    public static File findNonConflictingDest(final File destDir, final String name) {
+        File dest = new File(destDir, name);
+        final String[] splits = name.split("\\.");
+        final String baseName = splits[0];
+        splits[0] = "";
+        final String extension = String.join(".", splits);
+        int i = 1;
+        while (dest.exists()) {
+            dest = new File(destDir, String.format("%s_%d%s", baseName, i, extension));
+            i++;
+        }
+        return dest;
+    }
+
+    public static boolean isUriOrFilePath(final String path) {
+        try {
+            // Attempt to create a URI from the given path
+            // If the URI scheme is "file", it's a file path
+            return "file".equals(Uri.parse(path).getScheme());
+        } catch (Exception e) {
+            // If parsing the path as a URI fails, it's not a valid URI
+            // So, assume it's a file path
+            return true;
+        }
+    }
+
+    public static void copyUriToFile(final Context context, final Uri source, final File dest) {
+
+        try (final OutputStream outputStream = new FileOutputStream(dest, false);
+             final InputStream inputStream = context.getContentResolver().openInputStream(source)
+        ) {
+            final byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+        } catch (IOException ignored) {
+        }
+    }
+
+    public static File makeAbsolute(final String path, final File base) {
+        return path != null ? makeAbsolute(new File(path.trim()), base) : null;
+    }
+
+    public static File makeAbsolute(final File file, final File base) {
+        if (file == null) {
+            return null;
+        } else if (file.isAbsolute()) {
+            return file;
+        } else if (base != null) {
+            return new File(base, file.getPath()).getAbsoluteFile();
+        } else {
+            return null;
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static List<File> searchFiles(final File root, String glob) {
+        try {
+            glob = glob.trim();
+            glob = glob.startsWith("glob:") ? glob : "glob:" + glob;
+
+            final PathMatcher matcher = FileSystems.getDefault().getPathMatcher(glob);
+            final List<File> found = new ArrayList<>();
+            Files.walkFileTree(root.toPath(), new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(final Path path, final BasicFileAttributes attrs) {
+                    if (matcher.matches(path)) {
+                        found.add(path.toFile());
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+            return found;
+        } catch (IOException e) {
+            Log.d(GsFileUtils.class.getName(), e.toString());
+        }
+        return null;
     }
 }

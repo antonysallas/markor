@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
 
 To the extent possible under law, the person who associated CC0 with
 this file has waived all copyright and related or neighboring rights
@@ -27,7 +27,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="create_folder">Kreiraj direktorij</string>
     <string name="create_new_document">Kreiraj novi dokument</string>
     <string name="move">Premjesti</string>
-    <string name="copy">Kopiraj</string>
     <string name="info">Informacija</string>
     <string name="file_folder_already_exists_please_use_a_different_name">Datoteka/direktorij već postoji! Molimo odaberite drugi naziv</string>
     <string name="import_from_device">Prenesi sa uređaja</string>
@@ -57,6 +56,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="render_rtl_language">Prikaz za pisma koja se pišu slijeva udesno</string>
     <string name="error_cannot_create_notebook_dir__appspecific">Greška: Nije moguće kreirati direktorij za bilježnicu</string>
     <string name="last_modified_witharg">Zadnja izmjena: %s</string>
+    <string name="last_modified">Zadnja izmjena</string>
     <string name="select_this_folder">Označi ovaj direktorij</string>
     <string name="select">Označi</string>
     <string name="create">Kreiraj</string>
@@ -67,7 +67,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="hide_statusbar">Sakrij statusnu traku</string>
     <string name="name">Ime</string>
     <string name="url_or_path">URL / putanja</string>
-    <string name="insert_link">Priloži link</string>
     <string name="insert_image">Priloži sliku</string>
     <string name="contributors">Saradnici</string>
     <string name="save_location">Pohrani lokaciju</string>
@@ -303,7 +302,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="reload">Učitaj ponovo</string>
     <string name="wrap_words">Prijelom redova</string>
     <string name="soft_break_if_not_fit_to_width_else_enable_horizontal_scrolling">Kad tekst prelazi širinu ekrana, koristiti blagi prijelom. Ako ne, tad aktivirati vodoravno pomjeranje.</string>
-    <string name="recursive_search_in_current_directory">Rekurzivna pretraga u trenutnom direktoriju.</string>
     <string name="always_open_with_this_app">Uvijek otvori u ovoj aplikaciji</string>
     <string name="always_open_files_with_this_app_when_list_contains_file_extension">Datoteke uvijek otvori u ovoj aplikaciji kad popis sadržava ekstenziju. Koristi \'None, .html, .css, .js\' i slično za uređivanje web-datoteka i datoteka bez ekstenzije.</string>
     <string name="rotate">Rotiraj</string>

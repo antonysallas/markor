@@ -1,5 +1,33 @@
 ### Recent changes
 - See [Discussions](https://github.com/gsantner/markor/discussions), [Issues](https://github.com/gsantner/markor/issues) and [Project news](https://github.com/gsantner/markor/blob/master/NEWS.md) to see what is going on.
+- New Updates also visible here: <https://github.com/gsantner/markor/releases>
+
+### v2.12 series
+- [2.12.0](https://github.com/gsantner/markor/compare/v2.11.1...v2.12.0)
+- [2.12.1](https://github.com/gsantner/markor/compare/v2.12.0...v2.12.1)
+- [2.12.2](https://github.com/gsantner/markor/compare/v2.12.1...v2.12.2)
+- [2.12.3](https://github.com/gsantner/markor/compare/v2.12.2...v2.12.3)
+- [2.12.4](https://github.com/gsantner/markor/compare/v2.12.3...v2.12.4)
+- [2.12.5](https://github.com/gsantner/markor/compare/v2.12.4...v2.12.5)
+- [2.12.6](https://github.com/gsantner/markor/compare/v2.12.5...v2.12.6)
+
+### v2.11 ([Details](https://github.com/gsantner/markor/blob/master/NEWS.md#markor-v211---asciidoc-csv-and-org-mode-todotxt-advanced-search-line-numbers))
+- Reworked attachments (PR #2106 by @harshad1)
+- Editor/viewer: Side margin improvements 2, closes #2111 (PR #2119 by @guanglinn)
+- Format: Add Orgmode - SyntaxHighlight basic support (PR #2107 by @bigger124 @gsantner)
+- Editor/viewer: Side margin improvements, closes #2111 (PR #2118 by @guanglinn)
+- Reformat code, by @gsantner
+- Update translations (PR #2108)
+- ShareInto: Automatically remove new YouTube tracking parameter si
+- New folder in copy/move dialog, closes #2093 (PR #2098)
+- AsciiDoc: Support view-mode light theme, by @TimReset (#1880 #2091 #2092)
+- Update translations (PR #2071)
+- Line numbers improvements, by @harshad1 @guang-lin @gsantner (PR #2090)
+- Feature: Add Line numbers support (Issue #2057, PR #2062, by @guang-lin)
+- Chunked undo redo, by @harshad1 (#2052)
+- Update translations (PR #2056)
+- Update CSV documentation and NEWS/CHANGELOG (PR #2058)
+- Markdown: Text converter do not make duplicate header id (closes #2045, by @gsantner)
 
 ### v2.10 ([Details](https://github.com/gsantner/markor/blob/master/NEWS.md#markor-v210---custom-file-templates-share-into-remove-url-tracking-parameters))
 - [Search: Keep in-files search dialog open, closes #1663, by @harshad1 (PR #1689)](https://github.com/gsantner/markor/pull/1689/files)

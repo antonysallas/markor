@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
 
 To the extent possible under law, the person who associated CC0 with
 this file has waived all copyright and related or neighboring rights
@@ -27,7 +27,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="create_folder">Maak folder</string>
     <string name="create_new_document">Maak een nieuw document</string>
     <string name="move">Verplaatsen</string>
-    <string name="copy">Kopiëren</string>
     <string name="info">Info</string>
     <string name="file_folder_already_exists_please_use_a_different_name">Bestand/map bestaat al! Gebruik een andere naam</string>
     <string name="import_from_device">Importeer van apparaat</string>
@@ -68,7 +67,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="hide_statusbar">Verberg statusbalk</string>
     <string name="name">Naam</string>
     <string name="url_or_path">URL / Pad</string>
-    <string name="insert_link">Voeg koppeling toe</string>
     <string name="insert_image">Voeg afbeelding toe</string>
     <string name="contributors">Bijdragers</string>
     <string name="save_location">Locatie opslaan</string>
@@ -308,7 +306,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="reload">Herladen</string>
     <string name="wrap_words">Woorden weghalen</string>
     <string name="soft_break_if_not_fit_to_width_else_enable_horizontal_scrolling">Soft break als tekst niet past bij schermbreedte. Schakel horizontaal scrollen in.</string>
-    <string name="recursive_search_in_current_directory">Recursieve zoekopdracht in de huidige map.</string>
     <string name="always_open_with_this_app">Altijd open met deze app</string>
     <string name="always_open_files_with_this_app_when_list_contains_file_extension">Open altijd bestanden met deze app wanneer de lijst de bestandsextensie bevat. Gebruik \'Geen, .html, .css , .js\' bijvoorbeeld als u webbestanden en degenen zonder bestandsextensie wilt bewerken.</string>
     <string name="open_file_with">Bestand openen met</string>
