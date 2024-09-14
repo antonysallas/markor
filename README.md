@@ -1,6 +1,6 @@
 [![GitHub releases](https://img.shields.io/github/tag/gsantner/markor.svg)](https://github.com/gsantner/markor/releases)
 [![GitHub downloads](https://img.shields.io/github/downloads/gsantner/markor/total.svg?logo=github&logoColor=lime)](https://github.com/gsantner/markor/releases)
-[![Translate on Crowdin](https://img.shields.io/badge/translate-crowdin-green.svg)](https://crowdin.com/project/markor/invite)
+[![Translate on Crowdin](https://img.shields.io/badge/translate-crowdin-green.svg)](https://crowdin.com/project/markor)
 [![Community Discussion](https://img.shields.io/badge/chat-community-blue.svg)](https://github.com/gsantner/markor/discussions)
 [![GitHub CI](https://github.com/gsantner/markor/workflows/CI/badge.svg)](https://github.com/gsantner/markor/actions)
 
@@ -33,7 +33,7 @@ Markor is openly developed free software that accepts community contributions.
 <br/>📚 Notebook: Store all documents on a common filesystem folder
 <br/>📓 QuickNote: Fast accessible for keeping notes
 <br/>☑️ To-Do: Write down your to-do
-<br/>🖍 Formats: Markdown, todo.txt, Zim/WikiText, Plaintext, csv, ics, ini, json, toml, vcf, yaml
+<br/>🖍 Formats: Markdown, todo.txt, Zim/WikiText, Plaintext, [csv](doc/2023-06-02-csv-readme.md), ics, ini, json, toml, vcf, yaml
 <br/>📋 Copy to clipboard: Copy any text, including text shared into Markor
 <br/>💡 Notebook is the root folder of documents and can be changed to any location on the filesystem. QuickNote and To-Do are textfiles
 <br/>
@@ -45,7 +45,37 @@ Markor is openly developed free software that accepts community contributions.
 <br/>🔃 Markor is an offline app. It works with sync apps, but they have to do syncing respectively.
 <br/>🔒 Can encrypt your textfiles with AES256. You need to set a password at the settings and use Android device with version Marshmallow or newer. You can use [jpencconverter](https://gitlab.com/opensource21/jpencconverter) to encrypt/decrypt on desktop. Be aware that only the text is encrypted not pictures or attachments.
 
+## New features in the latest update - Markor v2.11 - AsciiDoc, CSV and Org-Mode, Todo.txt advanced search, Line numbers
 
+### Line number support
+
+Markor supports showing line numbers now. In the top file menu you can find a new option to enable numbers.
+It is supported in editor as well in view mode of documents (in code blocks).
+
+![Line numbers](doc/assets/2023-10-11-line-numbers.webp)
+
+### New format: AsciiDoc
+AsciiDoc is one of the new formats that are now supported.
+While it might be not as much fleshed out like Markdown, it should fit for general use.
+
+![AsciiDoc](doc/assets/2023-10-11-asciidoc.webp)
+
+### New format: CSV
+[CSV file](https://en.wikipedia.org/wiki/Comma-separated_values) are supported now (in sense of syntax highlighting and preview). 
+For details see [CSV README](doc/2023-06-02-csv-readme.md), it was implemented in #1988, #1987, #1980, #1667.
+
+* Editor with SyntaxHighlighter
+* Each csv column is shown in a different unique color to see which csv-data belongs to which colum/header
+* Preview as html-Table with export as pdf
+* A csv column may contain markdown (See Example column in screenshot)
+
+![](doc/assets/csv/2023-06-25-csv-landscape.webp)
+
+### New format: Org-Mode
+The third and last new format newly added is Org-Mode. Note that currently only editor syntax highlighting and action buttons to make editing easier are available.
+There is no dedicated view mode implemented.
+
+![Org-Mode](doc/assets/2023-10-07-orgmode.webp)
 
 ### Navigation
 * [**README**](README.md)
@@ -57,7 +87,6 @@ Markor is openly developed free software that accepts community contributions.
 * [**FAQ**](README.md#FAQ)
   * [File browser, file management](README.md#file-browser--file-management)
   * [Format: Markdown](README.md#format-markdown)
-  * [Format: Markdown](README.md#format-markdown)
   * [Format: todo.txt](README.md#format-todotxt)
 * [**More**](doc)
   * [Synced plaintext TODO and notes - Vim / Vimwiki, Markor Android, Syncthing, GTD (Pitt)](doc/2020-09-26-vimwiki-sync-plaintext-to-do-and-notes-todotxt-markdown.md)
@@ -65,6 +94,7 @@ Markor is openly developed free software that accepts community contributions.
   * [Using Markor to Write (and More) on an Android Device (The Plain Text Project)](doc/2019-07-16-using-markor-to-write-on-an-android-device-plaintextproject.md)
   * [How I Take Notes With Vim, Markdown, and Pandoc (Vaughan)](doc/2018-05-15-pandoc-vim-markdown-how-i-take-notes-vaughan.md)
 * [**NEWS**](NEWS.md)
+  * [Markor v2.11 - AsciiDoc, CSV and Org-Mode, Todo.txt advanced search](NEWS.md#markor-v211---asciidoc-csv-and-org-mode-todotxt-advanced-search-line-numbers) 
   * [Markor v2.10 - Custom file templates, Share Into automatically remove URL tracking parameters](NEWS.md#markor-v210---custom-file-templates-share-into-automatically-remove-url-tracking-parameters)
   * [Markor v2.9 - Snippets, Templates, Graphs, Charts, Diagrams, YAML front-matter, Chemistry](NEWS.md#markor-v29---snippets-templates-graphs-charts-diagrams-yaml-front-matter-chemistry)
   * [Markor v2.8 - Multi-selection for todo.txt dialogs](NEWS.md#markor-v28---multi-selection-for-todotxt-dialogs)
@@ -95,7 +125,7 @@ Markor is openly developed free software that accepts community contributions.
 * **Bug reports**  
   Report issues [here](https://github.com/gsantner/markor/issues). Please [search](https://github.com/gsantner/markor/issues?q=) for similar issues & [requests](https://github.com/gsantner/markor/discussions?discussions_q=) first. If it's not a bug, please head to discussions.
 * **Localization**  
-  Translate on [Crowdin](https://crowdin.com/project/markor/invite) (free).
+  Translate on [Crowdin](https://crowdin.com/project/markor) (free).
 
 ## Develop
 Clone the project using git. Then open the project in [Android Studio](https://developer.android.com/studio) (recommended), install required Android SDK dependencies where required.

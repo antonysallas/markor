@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
 
 To the extent possible under law, the person who associated CC0 with
 this file has waived all copyright and related or neighboring rights
@@ -27,7 +27,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="create_folder">Mappa létrehozása</string>
     <string name="create_new_document">Dokumentum létrehozása</string>
     <string name="move">Mozgatás</string>
-    <string name="copy">Másolás</string>
     <string name="info">Infó</string>
     <string name="file_folder_already_exists_please_use_a_different_name">A fájl már létezik! Változtasd meg a nevet</string>
     <string name="import_from_device">Importálás az eszközről</string>
@@ -57,6 +56,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="render_rtl_language">Jobbról balra író nyelvekhez</string>
     <string name="error_cannot_create_notebook_dir__appspecific">Hiba: A jegyzetfüzet mappa létrehozása sikertelen</string>
     <string name="last_modified_witharg">Utoljára módosítva: %s</string>
+    <string name="last_modified">Utoljára módosítva</string>
     <string name="select_this_folder">Mappa választása</string>
     <string name="select">Kiválaszt</string>
     <string name="create">Létrehoz</string>
@@ -67,7 +67,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="hide_statusbar">Státuszsor elrejtése</string>
     <string name="name">Név</string>
     <string name="url_or_path">URL / elérési út</string>
-    <string name="insert_link">Link beillesztése</string>
     <string name="insert_image">Kép beillesztése</string>
     <string name="contributors">Hozzájárulók</string>
     <string name="save_location">Mentési hely</string>

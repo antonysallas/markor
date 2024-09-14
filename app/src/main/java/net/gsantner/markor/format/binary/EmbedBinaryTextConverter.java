@@ -1,6 +1,6 @@
 /*#######################################################
  *
- * SPDX-FileCopyrightText: 2022-2023 Gregor Santner <gsantner AT mailbox DOT org>
+ * SPDX-FileCopyrightText: 2022-2024 Gregor Santner <gsantner AT mailbox DOT org>
  * SPDX-License-Identifier: Unlicense OR CC0-1.0
  *
 #########################################################*/
@@ -26,7 +26,7 @@ import java.util.List;
 public class EmbedBinaryTextConverter extends TextConverterBase {
     private static final List<String> EXT = new ArrayList<>();
     private static final List<String> EXT_AUDIO = Arrays.asList(".mp3", ".ogg", ".flac", ".opus", ".oga", ".wma", ".m4a", ".aac", ".wav", ".amr", ".mid", ".midi", ".pcm");
-    private static final List<String> EXT_IMAGE = Arrays.asList(".jpg", ".jpeg", ".png", ".bmp", ".gif", ".webp", ".svg", ".heic", ".heif");
+    private static final List<String> EXT_IMAGE = Arrays.asList(".jpg", ".jpeg", ".png", ".bmp", ".gif", ".webp", ".svg", ".heic", ".heif", ".avif");
     private static final List<String> EXT_VIDEO = Arrays.asList(".webm", ".mp4", ".mpeg4", ".mpeg", ".mpg", ".mkv", ".3gp", ".ts", ".m4v");
 
     public static final String EXT_MATCHES_M3U_PLAYLIST = "(?i).m3u8?";
@@ -53,7 +53,7 @@ public class EmbedBinaryTextConverter extends TextConverterBase {
 
     @SuppressWarnings({"ConstantConditions", "StringConcatenationInLoop"})
     @Override
-    public String convertMarkup(String markup, Context context, boolean isExportInLightMode, File file) {
+    public String convertMarkup(String markup, Context context, boolean lightMode, boolean lineNum, File file) {
         String converted = "", onLoadJs = "", head = "";
         if (file == null) {
             return "";
@@ -152,7 +152,7 @@ public class EmbedBinaryTextConverter extends TextConverterBase {
         }
 
         converted += HTML101_BODY_END;
-        return putContentIntoTemplate(context, converted, isExportInLightMode, file, onLoadJs, head);
+        return putContentIntoTemplate(context, converted, lightMode, file, onLoadJs, head);
     }
 
     @Override
@@ -161,7 +161,7 @@ public class EmbedBinaryTextConverter extends TextConverterBase {
     }
 
     @Override
-    protected boolean isFileOutOfThisFormat(String filepath, String extWithDot) {
-        return EXT.contains(extWithDot);
+    protected boolean isFileOutOfThisFormat(final File file, final String name, final String ext) {
+        return EXT.contains(ext);
     }
 }

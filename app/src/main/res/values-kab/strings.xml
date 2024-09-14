@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
 
 To the extent possible under law, the person who associated CC0 with
 this file has waived all copyright and related or neighboring rights
@@ -61,7 +61,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="hide_statusbar">Ffer afeggag n waddad</string>
     <string name="name">Isem</string>
     <string name="url_or_path">URL / Abrid</string>
-    <string name="insert_link">Ger aseɣwen</string>
     <string name="insert_image">Ger tugna</string>
     <string name="contributors">Iwiziwen</string>
     <string name="select_storage_folder">Fren akaram ara tesqedceḍ i usekles</string>

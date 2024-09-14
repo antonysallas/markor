@@ -1,6 +1,6 @@
 /*#######################################################
  *
- *   Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+ *   Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
  *   License of this file: Apache 2.0
  *     https://www.apache.org/licenses/LICENSE-2.0
  *
@@ -75,7 +75,7 @@ public class FileInfoDialog extends DialogFragment {
     private AlertDialog.Builder setUpDialog(final File file, LayoutInflater inflater) {
         View root;
         AlertDialog.Builder dialogBuilder;
-        dialogBuilder = new AlertDialog.Builder(inflater.getContext(), R.style.Theme_AppCompat_DayNight_Dialog);
+        dialogBuilder = new AlertDialog.Builder(inflater.getContext(), R.style.Theme_AppCompat_DayNight_Dialog_Rounded);
         root = inflater.inflate(R.layout.file_info_dialog, null);
 
         dialogBuilder.setView(root);
@@ -85,6 +85,7 @@ public class FileInfoDialog extends DialogFragment {
         tv(root, R.id.ui__fileinfodialog__last_modified).setText(DateUtils.formatDateTime(root.getContext(), file.lastModified(), (DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_NUMERIC_DATE)));
         tv(root, R.id.ui__fileinfodialog__last_modified_caption).setText(getString(R.string.last_modified_witharg, "").replace(":", "").trim());
         tv(root, R.id.ui__fileinfodialog__size_description).setText(GsFileUtils.getReadableFileSize(file.length(), false));
+        tv(root, R.id.ui__fileinfodialog__mimetype_description).setText(GsFileUtils.getMimeType(file));
         tv(root, R.id.ui__fileinfodialog__location).setOnLongClickListener(v -> {
             GsContextUtils.instance.setClipboard(v.getContext(), file.getAbsolutePath());
             Toast.makeText(v.getContext(), R.string.clipboard, Toast.LENGTH_SHORT).show();

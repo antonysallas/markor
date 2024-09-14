@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
 
 To the extent possible under law, the person who associated CC0 with
 this file has waived all copyright and related or neighboring rights
@@ -27,7 +27,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="create_folder">Luo kansio</string>
     <string name="create_new_document">Luo uusi asiakirja</string>
     <string name="move">Siirrä</string>
-    <string name="copy">Kopioi</string>
     <string name="info">Tiedot</string>
     <string name="file_folder_already_exists_please_use_a_different_name">Tiedosto / kansio on jo olemassa! Käytä toista nimeä</string>
     <string name="import_from_device">Tuo laitteelta</string>
@@ -68,7 +67,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="hide_statusbar">Piilota tilarivi</string>
     <string name="name">Nimi</string>
     <string name="url_or_path">URL / polku</string>
-    <string name="insert_link">Lisää linkki</string>
     <string name="insert_image">Lisää kuva</string>
     <string name="contributors">Osallistujat</string>
     <string name="save_location">Tallenna sijainti</string>
@@ -308,7 +306,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="reload">Reload</string>
     <string name="wrap_words">Rivitä sanat</string>
     <string name="soft_break_if_not_fit_to_width_else_enable_horizontal_scrolling">Pehmeä tauko, jos teksti ei sovi näytön leveyteen.</string>
-    <string name="recursive_search_in_current_directory">Rekursiivinen haku nykyisessä hakemistossa.</string>
     <string name="always_open_with_this_app">Avaa aina tällä sovelluksella</string>
     <string name="always_open_files_with_this_app_when_list_contains_file_extension">Avaa aina tiedostoja tällä sovelluksella, kun lista sisältää tiedostopäätteen. Käytä \'Ei mitään, .html, . ss , .js esimerkiksi jos haluat muokata web-tiedostoja ja niitä ilman tiedostopäätettä.</string>
     <string name="open_file_with">Avaa tiedosto ohjelmalla</string>

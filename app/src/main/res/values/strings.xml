@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
 
 To the extent possible under law, the person who associated CC0 with
 this file has waived all copyright and related or neighboring rights
@@ -26,8 +26,8 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="create_folder">Create Folder</string>
     <string name="create_new_document">Create new document</string>
     <string name="move">Move</string>
-    <string name="copy">Copy</string>
     <string name="info">Info</string>
+
     <string name="file_folder_already_exists_please_use_a_different_name">File/folder already exists! Please use a different name</string>
 
     <string name="import_from_device">Import from device</string>
@@ -63,6 +63,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="last_modified">Last modified</string>
     <string name="select_this_folder">Select this folder</string>
     <string name="select">Select</string>
+    <string name="select_all">Select all</string>
     <string name="create">Create</string>
     <string name="select_entries">Select entries</string>
     <string name="one_item_selected">One item selected</string>
@@ -73,7 +74,8 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
 
     <string name="name">Name</string>
     <string name="url_or_path">URL / Path</string>
-    <string name="insert_link">Insert Link</string>
+    <string name="insert_link">Insert link</string>
+    <string name="format_link">Format link</string>
     <string name="insert_image">Insert Image</string>
 
     <string name="contributors">Contributors</string>
@@ -225,11 +227,13 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="edit_text_in_center_of_screen">Edit text in the center of the screen</string>
     <string name="clipboard">Clipboard</string>
     <string name="select_existing_document">Select existing document</string>
+    <string name="select_create_document">Select or create document</string>
     <string name="open_source_licenses">Open Source Licenses</string>
     <string name="rate_this_app">Rate this app</string>
     <string name="translate">Translate</string>
     <string name="more_info_and_help">More info and help</string>
     <string name="report_bugs">Report bugs</string>
+    <string name="do_you_have_a_question_or_problem">Do you have a question or a problem?</string>
 
 
     <string name="join_community">Join the Community</string>
@@ -265,7 +269,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="enter_yaml_front_matter_attributes_to_show">Display entered YAML Front Matter attributes on top at viewed documents. Enter keys separated by commas. Leave empty for none or use \'*\' for all. \n\nIf any attribute is defined in the document (i.e. title: \'Hello\') and there is {{ post.title }} in your document too it is replaced. You can make a custom Front Matter heading this way.</string>
     <string name="table_of_contents">Table of contents</string>
     <string name="miscellaneous">Miscellaneous</string>
-
 
     <string name="prefer_view">Prefer view</string>
     <string name="no_calendar_app_is_installed">No calendar app is installed!</string>
@@ -330,8 +333,9 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="list_in_recent_files">List in recent files</string>
     <string name="reload">Reload</string>
     <string name="wrap_words">Wrap words</string>
+    <string name="line_numbers">Line numbers</string>
     <string name="soft_break_if_not_fit_to_width_else_enable_horizontal_scrolling">Soft break if text doesn\'t fit to screen width. Else enable horizontal scrolling.</string>
-    <string name="recursive_search_in_current_directory">Recursive search in current directory.</string>
+    <string name="recursive_search_in_location">Recursive search in %s</string>
     <string name="always_open_with_this_app">Always open with this app</string>
     <string name="always_open_files_with_this_app_when_list_contains_file_extension">Always open files with this app when the list contains the file extension. Use \'None, .html, .css , .js\' for example if you want to edit web files and those without file extension.</string>
     <string name="open_file_with">Open file with</string>
@@ -354,6 +358,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="how_much_columns_press_table_button_long_to_start_table">How many columns? Press table button long to start a table (insert header), press short to add a row.</string>
     <string name="example_of_a_markdown_table">Example of a Markdown table</string>
     <string name="delete_lines">Delete lines</string>
+    <string name="duplicate_lines">Duplicate lines</string>
     <string name="unordered_list">Unordered list</string>
     <string name="ordered_list">Ordered list</string>
     <string name="check_list">Check list</string>
@@ -383,6 +388,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
 
     <string name="create_new_file_or_folder">Create a new file or folder</string>
     <string name="choose_format">Choose format</string>
+    <string name="clear_selection">Clear selection</string>
     <string name="selected">Selected</string>
     <string name="back">Back</string>
     <string name="expand_collapse">Expand / Collapse</string>
@@ -456,12 +462,16 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="match_all">Match All</string>
     <string name="dynamic_notebook_root_links">Dynamic search for notebook root</string>
     <string name="search_dynamically_for_notebook_root">In order to follow wiki links, dynamically search for the notebook.zim file to identify the root directory for the current notebook. Check this if you use multiple zim notebooks or the notebook directory set in the app does not correspond to your zim notebook.</string>
-	<string name="share_into_format_prefix_for_text_shared">Format/Prefix for text shared into Markor. Follows Android\'s SimpleDateFormat rules.\n\nUse the placeholder {{text}} to position the shared text. If not specified, the shared text is appended and the format used as a prefix.</string>
+    <string name="share_into_format_prefix_for_text_shared">Format/Prefix for text shared into Markor. Follows Android\'s SimpleDateFormat rules.\n\nUse the placeholder {{text}} to position the shared text. If not specified, the shared text is appended and the format used as a prefix.</string>
     <string name="share_into_format">Share into - Format</string>
+    <string name="attachment_folder_name">Attachment folder name</string>
+    <string name="attachment_folder_name_desc">Subfolder under the current folder where attachments will be saved. If left blank, attachments will be saved in the current folder.</string>
     <string name="auto_format">Auto-format</string>
     <string name="insert_snippet">Insert snippet</string>
+    <string name="snippet_directory">Snippet / Template directory</string>
     <string name="error_could_not_open_file">Error: Could not open file.</string>
     <string name="document_error_clip">Error encountered: Text copied to clipboard.</string>
     <string name="wont_save_min_length">Files with fewer than %d characters not saved automatically in order to prevent data loss.</string>
     <string name="advanced_filtering_help"><![CDATA[<small><a href="https://www.github.com/gsantner/markor/discussions/1940">Advanced filtering syntax</a></small>]]></string>
+    <string name="filter">Filter</string>
 </resources>

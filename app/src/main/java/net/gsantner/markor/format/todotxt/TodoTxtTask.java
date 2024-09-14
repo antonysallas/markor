@@ -1,9 +1,9 @@
 /*#######################################################
  *
- * SPDX-FileCopyrightText: 2017-2023 Gregor Santner <gsantner AT mailbox DOT org>
+ * SPDX-FileCopyrightText: 2017-2024 Gregor Santner <gsantner AT mailbox DOT org>
  * SPDX-License-Identifier: Unlicense OR CC0-1.0
  *
- * Written 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+ * Written 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
  * To the extent possible under law, the author(s) have dedicated all copyright and related and neighboring rights to this software to the public domain worldwide. This software is distributed without any warranty.
  * You should have received a copy of the CC0 Public Domain Dedication along with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 #########################################################*/
@@ -33,12 +33,11 @@ public class TodoTxtTask {
     // Static memebers
     //
 
-    public static final Pattern TODOTXT_FILE_PATTERN = Pattern.compile("(?i)(^todo[-.]?.*)|(.*[-.]todo\\.((txt)|(text))$)");
     public static final SimpleDateFormat DATEF_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
     public static final int DATEF_YYYY_MM_DD_LEN = "yyyy-MM-dd".length();
     public static final String PT_DATE = "\\d{4}-\\d{2}-\\d{2}";
-    public static final Pattern PATTERN_PROJECTS = Pattern.compile("\\B(?:\\++)(\\S+)");
-    public static final Pattern PATTERN_CONTEXTS = Pattern.compile("\\B(?:\\@+)(\\S+)");
+    public static final Pattern PATTERN_PROJECTS = Pattern.compile("(?:^|\\s)(?:\\++)(\\S+)");
+    public static final Pattern PATTERN_CONTEXTS = Pattern.compile("(?:^|\\s)(?:\\@+)(\\S+)");
     public static final Pattern PATTERN_DONE = Pattern.compile("(?m)(^[Xx]) (.*)$");
     public static final Pattern PATTERN_DATE = Pattern.compile("(?:^|\\s|:)(" + PT_DATE + ")(?:$|\\s)");
     public static final Pattern PATTERN_KEY_VALUE_PAIRS__TAG_ONLY = Pattern.compile("(?i)([a-z]+):([a-z0-9_-]+)");
@@ -63,11 +62,6 @@ public class TodoTxtTask {
 
     public static String getToday() {
         return DATEF_YYYY_MM_DD.format(new Date());
-    }
-
-    public static boolean isTodoFile(String filepath) {
-        return filepath != null && (filepath.endsWith("/todo.txt")
-                || TODOTXT_FILE_PATTERN.matcher(filepath).matches() && (filepath.endsWith(".txt") || filepath.endsWith(".text")));
     }
 
     public static List<TodoTxtTask> getTasks(final CharSequence text, final int selStart, final int selEnd) {

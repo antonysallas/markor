@@ -1,6 +1,6 @@
 /*#######################################################
  *
- *   Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+ *   Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
  *   License of this file: Apache 2.0
  *     https://www.apache.org/licenses/LICENSE-2.0
  *
@@ -29,7 +29,11 @@ public class MarkorFileBrowserFactory {
     public static GsCallback.b2<Context, File> IsMimeAudio = (context, file) -> file != null && GsContextUtils.instance.getMimeType(context, file).startsWith("audio/");
     public static GsCallback.b2<Context, File> IsMimeVideo = (context, file) -> file != null && GsContextUtils.instance.getMimeType(context, file).startsWith("video/");
 
-    public static GsFileBrowserOptions.Options prepareFsViewerOpts(Context context, boolean doSelectFolder, GsFileBrowserOptions.SelectionListener listener) {
+    public static GsFileBrowserOptions.Options prepareFsViewerOpts(
+            final Context context,
+            final boolean doSelectFolder,
+            final GsFileBrowserOptions.SelectionListener listener
+    ) {
         final GsFileBrowserOptions.Options opts = new GsFileBrowserOptions.Options();
         final MarkorContextUtils cu = new MarkorContextUtils(context);
         final AppSettings appSettings = ApplicationObject.settings();
@@ -40,10 +44,13 @@ public class MarkorFileBrowserFactory {
         opts.doSelectFolder = doSelectFolder;
         opts.doSelectFile = !doSelectFolder;
 
-        opts.searchHint = R.string.search_documents;
+        opts.okButtonEnable = opts.doSelectFolder || opts.doSelectMultiple;
+
         opts.searchButtonImage = R.drawable.ic_search_black_24dp;
+        opts.newDirButtonImage = R.drawable.baseline_create_new_folder_24;
         opts.homeButtonImage = R.drawable.ic_home_black_24dp;
         opts.selectedItemImage = R.drawable.ic_check_black_24dp;
+        opts.newDirButtonText = R.string.create_folder;
         opts.upButtonEnable = true;
         opts.homeButtonEnable = true;
         opts.mustStartWithRootFolder = false;
@@ -51,27 +58,32 @@ public class MarkorFileBrowserFactory {
         opts.contentDescriptionSelected = R.string.selected;
         opts.contentDescriptionFile = R.string.file;
 
-        opts.sortFolderFirst = appSettings.isFileBrowserSortFolderFirst();
-        opts.sortByType = appSettings.getFileBrowserSortByType();
-        opts.sortReverse = appSettings.isFileBrowserSortReverse();
-        opts.filterShowDotFiles = appSettings.isFileBrowserFilterShowDotFiles();
-
         opts.accentColor = R.color.accent;
         opts.primaryColor = R.color.primary;
         opts.primaryTextColor = R.color.primary_text;
         opts.secondaryTextColor = R.color.secondary_text;
         opts.backgroundColor = R.color.background;
         opts.titleTextColor = R.color.primary_text;
+        opts.fileColor = R.color.file;
+        opts.folderColor = R.color.folder;
         opts.fileImage = R.drawable.ic_file_white_24dp;
         opts.folderImage = R.drawable.ic_folder_white_24dp;
-
-        opts.recentFiles = appSettings.getAsFileList(appSettings.getRecentDocuments());
-        opts.popularFiles = appSettings.getAsFileList(appSettings.getPopularDocuments());
-        opts.favouriteFiles = appSettings.getFavouriteFiles();
 
         opts.titleText = R.string.select;
 
         opts.mountedStorageFolder = cu.getStorageAccessFolder(context);
+
+        opts.refresh = () -> {
+            opts.sortFolderFirst = appSettings.isFileBrowserSortFolderFirst();
+            opts.sortByType = appSettings.getFileBrowserSortByType();
+            opts.sortReverse = appSettings.isFileBrowserSortReverse();
+            opts.filterShowDotFiles = appSettings.isFileBrowserFilterShowDotFiles();
+            opts.favouriteFiles = appSettings.getFavouriteFiles();
+            opts.recentFiles = appSettings.getRecentFiles();
+            opts.popularFiles = appSettings.getPopularFiles();
+        };
+        opts.refresh.callback();
+
         return opts;
     }
 
@@ -83,20 +95,30 @@ public class MarkorFileBrowserFactory {
         return files;
     }
 
-    private static void showDialog(FragmentManager fm, GsFileBrowserOptions.Options opts) {
-        GsFileBrowserDialog filesystemViewerDialog = GsFileBrowserDialog.newInstance(opts);
+    private static GsFileBrowserDialog showDialog(final FragmentManager fm, final GsFileBrowserOptions.Options opts) {
+        final GsFileBrowserDialog filesystemViewerDialog = GsFileBrowserDialog.newInstance(opts);
         filesystemViewerDialog.show(fm, GsFileBrowserDialog.FRAGMENT_TAG);
+        return filesystemViewerDialog;
     }
 
-    public static void showFileDialog(GsFileBrowserOptions.SelectionListener listener, FragmentManager fm, Context context, GsCallback.b2<Context, File> fileOverallFilter) {
+    public static GsFileBrowserDialog showFileDialog(
+            final GsFileBrowserOptions.SelectionListener listener,
+            final FragmentManager fm,
+            final Context context,
+            final GsCallback.b2<Context, File> fileOverallFilter
+    ) {
         final GsFileBrowserOptions.Options opts = prepareFsViewerOpts(context, false, listener);
         opts.fileOverallFilter = fileOverallFilter;
-        showDialog(fm, opts);
+        return showDialog(fm, opts);
     }
 
-    public static void showFolderDialog(GsFileBrowserOptions.SelectionListener listener, FragmentManager fm, Context context) {
+    public static GsFileBrowserDialog showFolderDialog(
+            final GsFileBrowserOptions.SelectionListener listener,
+            final FragmentManager fm,
+            final Context context
+    ) {
         final GsFileBrowserOptions.Options opts = prepareFsViewerOpts(context, true, listener);
         opts.okButtonText = R.string.select_this_folder;
-        showDialog(fm, opts);
+        return showDialog(fm, opts);
     }
 }

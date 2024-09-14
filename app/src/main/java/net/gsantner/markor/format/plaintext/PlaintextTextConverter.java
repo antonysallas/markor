@@ -1,6 +1,6 @@
 /*#######################################################
  *
- *   Maintained 2018-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+ *   Maintained 2018-2024 by Gregor Santner <gsantner AT mailbox DOT org>
  *   License of this file: Apache 2.0
  *     https://www.apache.org/licenses/LICENSE-2.0
  *
@@ -30,7 +30,7 @@ public class PlaintextTextConverter extends TextConverterBase {
     private static final String HTML101_BODY_PRE_END = "</pre>";
     private static final List<String> EXT_TEXT = Arrays.asList(".txt", ".taskpaper", ".org", ".ldg", ".ledger", ".m3u", ".m3u8");
     private static final List<String> EXT_HTML = Arrays.asList(".html", ".htm");
-    private static final List<String> EXT_CODE_HL = Arrays.asList(".py", ".cpp", ".h", ".c", ".js", ".css", ".cs", ".kt", ".lua", ".perl", ".java", ".qml", ".diff", ".php", ".r", ".patch", ".rs", ".swift", ".ts", ".mm", ".go", ".sh", ".rb", ".tex", ".xml", ".xlf");
+    private static final List<String> EXT_CODE_HL = Arrays.asList(".py", ".cpp", ".h", ".c", ".js", ".mjs", ".css", ".cs", ".kt", ".lua", ".perl", ".java", ".qml", ".diff", ".php", ".r", ".patch", ".rs", ".swift", ".ts", ".mm", ".go", ".sh", ".rb", ".tex", ".xml", ".xlf");
     private static final List<String> EXT = new ArrayList<>();
 
     static {
@@ -44,7 +44,7 @@ public class PlaintextTextConverter extends TextConverterBase {
     //########################
 
     @Override
-    public String convertMarkup(String markup, Context context, boolean isExportInLightMode, File file) {
+    public String convertMarkup(String markup, Context context, boolean lightMode, boolean lineNum, File file) {
         String converted = "", onLoadJs = "", head = "";
         final String extWithDot = GsFileUtils.getFilenameExtension(file);
         String tmp;
@@ -65,12 +65,12 @@ public class PlaintextTextConverter extends TextConverterBase {
             converted += markup;
         } else if (extWithDot.matches(EmbedBinaryTextConverter.EXT_MATCHES_M3U_PLAYLIST)) {
             // Playlist: Load in Embed-Binary view-mode
-            return FormatRegistry.CONVERTER_EMBEDBINARY.convertMarkup(markup, context, isExportInLightMode, file);
+            return FormatRegistry.CONVERTER_EMBEDBINARY.convertMarkup(markup, context, lightMode, lineNum, file);
         } else if (EXT_CODE_HL.contains(extWithDot) || (this instanceof KeyValueTextConverter)) {
             // Source code: Load in Markdown view-mode & utilize code block highlighting
             final String hlLang = extWithDot.replace(".sh", ".bash").replace(".", "");
             markup = String.format(Locale.ROOT, "```%s\n%s\n```", hlLang, markup);
-            return FormatRegistry.CONVERTER_MARKDOWN.convertMarkup(markup, context, isExportInLightMode, file);
+            return FormatRegistry.CONVERTER_MARKDOWN.convertMarkup(markup, context, lightMode, lineNum, file);
         } else {
             ///////////////////////////////////////////
             // Whatever else show in plaintext <pre> block
@@ -78,7 +78,7 @@ public class PlaintextTextConverter extends TextConverterBase {
                     + TextUtilsCompat.htmlEncode(markup)
                     + HTML101_BODY_PRE_END;
         }
-        return putContentIntoTemplate(context, converted, isExportInLightMode, file, onLoadJs, head);
+        return putContentIntoTemplate(context, converted, lightMode, file, onLoadJs, head);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class PlaintextTextConverter extends TextConverterBase {
     }
 
     @Override
-    protected boolean isFileOutOfThisFormat(String filepath, String extWithDot) {
-        return EXT.contains(extWithDot) || _appSettings.isExtOpenWithThisApp(extWithDot) || GsFileUtils.isTextFile(new File(filepath));
+    protected boolean isFileOutOfThisFormat(final File file, final String name, final String ext) {
+        return EXT.contains(ext) || _appSettings.isExtOpenWithThisApp(ext) || GsFileUtils.isTextFile(file);
     }
 }

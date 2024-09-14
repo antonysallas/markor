@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
 
 To the extent possible under law, the person who associated CC0 with
 this file has waived all copyright and related or neighboring rights
@@ -25,7 +25,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="create_folder">Krei Dosierujon</string>
     <string name="create_new_document">Krei novan dokumenton</string>
     <string name="move">Movi</string>
-    <string name="copy">Kopii</string>
     <string name="info">Informo</string>
     <string name="file_folder_already_exists_please_use_a_different_name">Dosiero/dosierujo jam ekzistas! Bonvolu uzi malsaman nomon</string>
     <string name="import_from_device">Enporti el aparato</string>
@@ -50,13 +49,13 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="image">Bildo</string>
     <string name="font_size">Tipara Grando</string>
     <string name="last_modified_witharg">Laste modifita: %s</string>
+    <string name="last_modified">Laste modifita</string>
     <string name="select_this_folder">Elekti ĉi tiun dosierujon</string>
     <string name="select">Elekti</string>
     <string name="create">Krei</string>
     <string name="select_entries">Elekti elementojn</string>
     <string name="hide_statusbar">Kaŝu statbreton</string>
     <string name="name">Dosiernomo</string>
-    <string name="insert_link">Enmeti Ligilon</string>
     <string name="insert_image">Enmeti Bildon</string>
     <string name="contributors">Kontribuantoj</string>
     <string name="licenses">Permesiloj</string>

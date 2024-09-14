@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
 
 To the extent possible under law, the person who associated CC0 with
 this file has waived all copyright and related or neighboring rights
@@ -27,7 +27,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="create_folder">Crear cartafol</string>
     <string name="create_new_document">Crear un novo Documento</string>
     <string name="move">Mover</string>
-    <string name="copy">Copiar</string>
     <string name="info">Información</string>
     <string name="import_from_device">Importar dun dispositivo</string>
     <string name="import_">Importar</string>
@@ -55,6 +54,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="render_rtl_language">Renderizar para idiomas escritos de dereita a esqueda</string>
     <string name="error_cannot_create_notebook_dir__appspecific">Erro: non se puido crear o directorio para as notas</string>
     <string name="last_modified_witharg">Última modificación: %s</string>
+    <string name="last_modified">Última modificación</string>
     <string name="select_this_folder">Seleccionar este cartafol</string>
     <string name="select">Seleccionar</string>
     <string name="create">Crear</string>
@@ -64,7 +64,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="hide_statusbar">Agochar barra de estado</string>
     <string name="name">Nome</string>
     <string name="url_or_path">URL / Ruta</string>
-    <string name="insert_link">Inserir ligazón</string>
     <string name="insert_image">Inserir imaxe</string>
     <string name="contributors">Contribúen</string>
     <string name="select_storage_folder">Seleccionar cartafol de almacenamento</string>

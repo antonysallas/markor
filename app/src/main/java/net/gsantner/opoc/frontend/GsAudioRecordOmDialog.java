@@ -1,9 +1,9 @@
 /*#######################################################
  *
- * SPDX-FileCopyrightText: 2020-2023 Gregor Santner <gsantner AT mailbox DOT org>
+ * SPDX-FileCopyrightText: 2020-2024 Gregor Santner <gsantner AT mailbox DOT org>
  * SPDX-License-Identifier: Unlicense OR CC0-1.0
  *
- * Written 2020-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+ * Written 2020-2024 by Gregor Santner <gsantner AT mailbox DOT org>
  * To the extent possible under law, the author(s) have dedicated all copyright and related and neighboring rights to this software to the public domain worldwide. This software is distributed without any warranty.
  * You should have received a copy of the CC0 Public Domain Dedication along with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 #########################################################*/
@@ -58,7 +58,7 @@ import omrecorder.Recorder;
 //
 @SuppressWarnings({"ResultOfMethodCallIgnored", "unused"})
 public class GsAudioRecordOmDialog {
-    public static void showAudioRecordDialog(final Activity activity, @StringRes final int titleResId, final GsCallback.a1<File> recordFinishedCallbackWithPathToTemporaryFile) {
+    public static void showAudioRecordDialog(final Activity activity, @StringRes final int titleResId, final GsCallback.a1<String> recordFinishedCallbackWithPathToTemporaryFile) {
         ////////////////////////////////////
         // Request permission in case not granted. Do not show dialog UI in this case
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -79,7 +79,7 @@ public class GsAudioRecordOmDialog {
         final AtomicReference<MediaPlayer> mediaPlayer = new AtomicReference<>();
         final AtomicReference<AlertDialog> dialog = new AtomicReference<>();
         final AtomicReference<Long> startTime = new AtomicReference<>();
-        final File TMP_FILE_RECORDING = new File(activity.getCacheDir(), "recording.wav");
+        final File TMP_FILE_RECORDING = generateFilename(activity.getCacheDir());
         if (TMP_FILE_RECORDING.exists()) {
             TMP_FILE_RECORDING.delete();
         }
@@ -169,9 +169,9 @@ public class GsAudioRecordOmDialog {
 
         ////////////////////////////////////
         // Callback for OK & Cancel dialog button
-        DialogInterface.OnClickListener dialogOkAndCancelListener = (dialogInterface, dialogButtonCase) -> {
+        final DialogInterface.OnClickListener dialogOkAndCancelListener = (dialogInterface, dialogButtonCase) -> {
             final boolean isSavePressed = (dialogButtonCase == DialogInterface.BUTTON_POSITIVE);
-            if (isRecordSavedOnce.get()) {
+            if (isRecording.get() || isRecordSavedOnce.get()) {
                 try {
                     recorder.get().stopRecording();
                 } catch (Exception ignored) {
@@ -181,7 +181,7 @@ public class GsAudioRecordOmDialog {
                         TMP_FILE_RECORDING.delete();
                     }
                 } else if (recordFinishedCallbackWithPathToTemporaryFile != null) {
-                    recordFinishedCallbackWithPathToTemporaryFile.callback(TMP_FILE_RECORDING);
+                    recordFinishedCallbackWithPathToTemporaryFile.callback(TMP_FILE_RECORDING.getAbsolutePath());
                 }
             }
             dialogInterface.dismiss();
@@ -219,7 +219,7 @@ public class GsAudioRecordOmDialog {
         }
     }
 
-    public static File generateFilename(File recordDirectory) {
+    public static File generateFilename(final File recordDirectory) {
         final String datestr = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss", Locale.ENGLISH).format(new Date());
         return new File(recordDirectory, datestr + "-record.wav");
     }

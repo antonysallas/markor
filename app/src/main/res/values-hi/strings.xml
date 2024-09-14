@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
 
 To the extent possible under law, the person who associated CC0 with
 this file has waived all copyright and related or neighboring rights
@@ -27,7 +27,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="create_folder">फोल्डर बनाएं</string>
     <string name="create_new_document">नया दस्तावेज़ बनाएं</string>
     <string name="move">स्थान-परिवर्तन</string>
-    <string name="copy">प्रतिलिपि बनाएँ</string>
     <string name="info">जानकारी</string>
     <string name="file_folder_already_exists_please_use_a_different_name">फाइल या फोल्डर पहले से उप्ल्व्द उप्ल्व्द है! दूसरा नाम सोचे</string>
     <string name="import_from_device">डिवाइस से आयात करें</string>
@@ -56,6 +55,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="render_rtl_language">दाएं से बाएं भाषाओं के लिए प्रस्तुत करना</string>
     <string name="error_cannot_create_notebook_dir__appspecific">त्रुटि: निर्देशिका को सहेज नहीं सका</string>
     <string name="last_modified_witharg">अंतिम बार संशोधित: %s</string>
+    <string name="last_modified">अंतिम बार संशोधित</string>
     <string name="select_this_folder">इस फ़ोल्डर का चयन करें</string>
     <string name="select">चयन करें</string>
     <string name="create">बनाये</string>
@@ -66,7 +66,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="hide_statusbar">स्थिति पट्टी छुपाएँ</string>
     <string name="name">नाम</string>
     <string name="url_or_path">URL / पथ</string>
-    <string name="insert_link">लिंक सम्मिलित करें</string>
     <string name="insert_image">चित्र डालें</string>
     <string name="contributors">योगदान कर्ता</string>
     <string name="save_location">सहेजने का स्थान</string>
@@ -193,6 +192,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="send_debug_log">डिबग लग्स को भेजें</string>
     <string name="print_pdf">PDF प्रिंट करें</string>
     <string name="current">प्रगति पर</string>
+    <string name="heading">शीर्षक</string>
     <string name="heading_1">शीर्षक 1</string>
     <string name="heading_2">शीर्षक 2</string>
     <string name="heading_3">शीर्षक 3</string>

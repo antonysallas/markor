@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
 
 To the extent possible under law, the person who associated CC0 with
 this file has waived all copyright and related or neighboring rights
@@ -27,7 +27,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="create_folder">إنشاء مجلد</string>
     <string name="create_new_document">إنشاء ملف جديد</string>
     <string name="move">نقل</string>
-    <string name="copy">نسخ</string>
     <string name="info">معلومات</string>
     <string name="file_folder_already_exists_please_use_a_different_name">الملف/المجلد موجود مسبقاً! الرجاء استخدام اسم مختلف</string>
     <string name="import_from_device">استيراد من الجهاز</string>
@@ -68,7 +67,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="hide_statusbar">إخفاء شريط الحالة</string>
     <string name="name">الإسم</string>
     <string name="url_or_path">الرابط \ المسار</string>
-    <string name="insert_link">إضافة رابط</string>
     <string name="insert_image">إضافة صورة</string>
     <string name="contributors">المساهمون</string>
     <string name="save_location">حفظ المسار</string>
@@ -308,7 +306,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="reload">إنعاش</string>
     <string name="wrap_words">كلمات مخفية</string>
     <string name="soft_break_if_not_fit_to_width_else_enable_horizontal_scrolling">استراحة ناعمة إذا كان النص غير مناسب لعرض الشاشة. وإلا تمكين التمرير الأفقي.</string>
-    <string name="recursive_search_in_current_directory">البحث المتكرر في الدليل الحالي.</string>
     <string name="always_open_with_this_app">افتحه دائما بهذا التطبيق</string>
     <string name="always_open_files_with_this_app_when_list_contains_file_extension">فتح الملفات دائما مع هذا التطبيق عندما تحتوي القائمة على امتداد الملف. استخدم \'لا شيء، .html. .js\' على سبيل المثال إذا كنت ترغب في تحرير ملفات الويب وتلك التي ليس لها امتداد للملف.</string>
     <string name="open_file_with">فتح الملف باستخدام</string>

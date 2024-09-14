@@ -1,7 +1,7 @@
 /*#######################################################
  * Copyright (c) 2014 Jeff Martin
  * Copyright (c) 2015 Pedro Lafuente
- * Copyright (c) 2017-2023 Gregor Santner
+ * Copyright (c) 2017-2024 Gregor Santner
  *
  * Licensed under the MIT license.
  * You can get a copy of the license text here:
@@ -137,7 +137,7 @@ public class WrMarkorSingleton {
             if (dest.exists()) {
                 // Special case - duplicate the file with new name if copying to same directory
                 if (resolution == ConflictResolution.KEEP_BOTH || (!isMove && file.equals(dest))) {
-                    moveOrCopy(activity, file, findNonConflictingDest(file, destDir), isMove);
+                    moveOrCopy(activity, file, GsFileUtils.findNonConflictingDest(destDir, file.getName()), isMove);
                 } else if (resolution == ConflictResolution.OVERWRITE) {
                     if (deleteFile(dest, activity)) {
                         moveOrCopy(activity, file, dest, isMove);
@@ -171,20 +171,6 @@ public class WrMarkorSingleton {
         } else {
             copyFile(src, dest);
         }
-    }
-
-    public File findNonConflictingDest(final File file, final File destDir) {
-        File dest = new File(destDir, file.getName());
-        final String[] splits = file.getName().split("\\.");
-        final String name = splits[0];
-        splits[0] = "";
-        final String extension = String.join(".", splits);
-        int i = 1;
-        while (dest.exists()) {
-            dest = new File(destDir, String.format("%s_%d%s", name, i, extension));
-            i++;
-        }
-        return dest;
     }
 
     public boolean isDirectoryEmpty(ArrayList<File> files) {

@@ -27,7 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import net.gsantner.markor.R;
-import net.gsantner.markor.frontend.textview.TextViewUtils;
+import net.gsantner.opoc.format.GsTextUtils;
 import net.gsantner.opoc.model.GsSharedPreferencesPropertyBackend;
 
 import org.json.JSONArray;
@@ -106,7 +106,7 @@ public class SearchAndReplaceTextDialog {
         }
 
         final Resources res = activity.getResources();
-        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.Theme_AppCompat_DayNight_Dialog_Rounded);
         final View viewRoot = activity.getLayoutInflater().inflate(R.layout.search_replace_dialog, null);
         final AtomicReference<Dialog> dialog = new AtomicReference<>();
 
@@ -201,6 +201,9 @@ public class SearchAndReplaceTextDialog {
 
         builder.setView(viewRoot).setNegativeButton(R.string.cancel, null);
         dialog.set(builder.show());
+
+        //noinspection DataFlowIssue
+        dialog.get().getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     private void performReplace(final boolean replaceAll) {
@@ -244,7 +247,7 @@ public class SearchAndReplaceTextDialog {
     }
 
     private String getReplacePattern() {
-        return TextViewUtils.unescapeString(replaceText.getText().toString());
+        return GsTextUtils.unescapeString(replaceText.getText().toString());
     }
 
     private void updateUI() {

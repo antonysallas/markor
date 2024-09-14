@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
 
 To the extent possible under law, the person who associated CC0 with
 this file has waived all copyright and related or neighboring rights
@@ -27,7 +27,6 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="create_folder">Crea una carpeta</string>
     <string name="create_new_document">Crea un nou document</string>
     <string name="move">Mou</string>
-    <string name="copy">Copia</string>
     <string name="info">Informació</string>
     <string name="file_folder_already_exists_please_use_a_different_name">El fitxer/carpeta ja existeix. Utilitzeu un nom diferent</string>
     <string name="import_from_device">Importa des d\'un dispositiu</string>
@@ -60,6 +59,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="last_modified">Última modificació</string>
     <string name="select_this_folder">Selecciona aquesta carpeta</string>
     <string name="select">Selecciona</string>
+    <string name="select_all">Selecciona-ho tot</string>
     <string name="create">Crea</string>
     <string name="select_entries">Selecciona les entrades</string>
     <string name="one_item_selected">Un element seleccionat</string>
@@ -68,10 +68,12 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="hide_statusbar">Amaga la barra d\'estat</string>
     <string name="name">Nom</string>
     <string name="url_or_path">URL / Ruta</string>
-    <string name="insert_link">Insereix enllaç</string>
+    <string name="insert_link">Insereix un enllaç</string>
+    <string name="format_link">Formata l\'enllaç</string>
     <string name="insert_image">Insereix imatge</string>
     <string name="contributors">Col·laboradors</string>
     <string name="save_location">Desa la ubicació</string>
+    <string name="saved_location_to">S\'ha desat a %s</string>
     <string name="select_storage_folder">Seleccioneu la carpeta d\'emmagatzematge</string>
     <string name="licenses">Llicències</string>
     <string name="changelog">Novetats</string>
@@ -80,6 +82,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="show_third_party_licenses">Mostra les llicències de tercers</string>
     <string name="language_change_restart_description">Canvieu l\'idioma d\'aquesta aplicació. Reinicieu l\'aplicació perquè els canvis tinguin efecte</string>
     <string name="language">Idioma</string>
+    <string name="storage_permission_required">Cal permís d\'emmagatzematge per llegir i escriure fitxers</string>
     <string name="open_with">Obre amb</string>
     <string name="sort_by">Ordena per</string>
     <string name="date">Data</string>
@@ -194,6 +197,10 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="unordered_list_char_asterisk">Asterisc (*)</string>
     <string name="unordered_list_char_plus">Suma (+)</string>
     <string name="filemanager_doesnot_supply_required_data__appspecific">Markor només pot editar documents locals disponibles sense connexió i no admet administradors d\'arxius que no proporcionin la ruta completa del fitxer.</string>
+    <string name="file_does_not_exist_and_cant_be_created">El fitxer o el directori no existeix i no es pot crear</string>
+    <string name="permissions">Permisos</string>
+    <string name="permission_paths_revert">Voleu tornar a les rutes per defecte?</string>
+    <string name="permission_not_granted">Permís no concedit</string>
     <string name="sync_to_local_folder_notice">Avís: les aplicacions de sincronització poden col·locar fitxers en carpetes personalitzades. Podeu obrir-les canviant la carpeta de documents de Markor o en un altre gestor de fitxers.</string>
     <string name="vertical_alignment">Alineació vertical</string>
     <string name="horizontal_alignment">Alineació horitzontal</string>
@@ -209,11 +216,13 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="edit_text_in_center_of_screen">Edita el text al centre de la pantalla</string>
     <string name="clipboard">Porta-retalls</string>
     <string name="select_existing_document">Seleccioneu el document existent</string>
+    <string name="select_create_document">Seleccioneu o creeu un document</string>
     <string name="open_source_licenses">Llicències de codi obert</string>
     <string name="rate_this_app">Valoreu l\'aplicació</string>
     <string name="translate">Tradueix</string>
     <string name="more_info_and_help">Més informació i ajuda</string>
     <string name="report_bugs">Informeu d\'errors</string>
+    <string name="do_you_have_a_question_or_problem">Tens alguna pregunta o un problema?</string>
     <string name="join_community">Uniu-vos a la comunitat</string>
     <string name="bug_reports_suggest_improvements">Feu comentaris, informeu d\'errors o suggeriu millores</string>
     <string name="help_translating_this_app">Traduïu aquesta aplicació a altres idiomes</string>
@@ -308,8 +317,8 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="list_in_recent_files">Mostra-ho als fitxers recents</string>
     <string name="reload">Recarrega</string>
     <string name="wrap_words">Ajusta les paraules</string>
+    <string name="line_numbers">Números de línies</string>
     <string name="soft_break_if_not_fit_to_width_else_enable_horizontal_scrolling">Salt suau si el text no s\'ajusta a l\'amplada de la pantalla. En cas contrari, activeu el desplaçament horitzontal.</string>
-    <string name="recursive_search_in_current_directory">Cerca recursiva al directori actual.</string>
     <string name="always_open_with_this_app">Obre sempre amb aquesta aplicació</string>
     <string name="always_open_files_with_this_app_when_list_contains_file_extension">Obre sempre els fitxers amb aquesta aplicació quan la llista conté l\'extensió del fitxer. Utilitzeu «None, .html, .css , .js» per exemple, si voleu editar fitxers web i aquells que no tinguin extensió de fitxer.</string>
     <string name="open_file_with">Obre fitxer amb</string>
@@ -332,6 +341,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="how_much_columns_press_table_button_long_to_start_table">Quantes columnes? Mantingueu premut el botó taula per iniciar una taula (insereix un encapçalament), premeu-lo per afegir una fila.</string>
     <string name="example_of_a_markdown_table">Exemple d\'una taula Markdown</string>
     <string name="delete_lines">Suprimeix les línies</string>
+    <string name="duplicate_lines">Línies duplicades</string>
     <string name="unordered_list">Llista no ordenada</string>
     <string name="ordered_list">Llista ordenada</string>
     <string name="check_list">Llista de verificacions</string>
@@ -360,6 +370,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="archive_completed_tasks">Arxivar les tasques completades</string>
     <string name="create_new_file_or_folder">Crea un fitxer o carpeta nova</string>
     <string name="choose_format">Trieu el format</string>
+    <string name="clear_selection">Neteja la selecció</string>
     <string name="selected">Seleccionat</string>
     <string name="back">Enrere</string>
     <string name="expand_collapse">Expandeix/Replega</string>
@@ -434,10 +445,14 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="search_dynamically_for_notebook_root">Per seguir els enllaços wiki, cerqueu dinàmicament el fitxer notebook.zim per identificar el directori arrel del quadern actual. Marqueu-ho si feu servir diversos quaderns zim o el directori de quaderns establert a l\'aplicació no es correspon amb el vostre quadern zim.</string>
     <string name="share_into_format_prefix_for_text_shared">Format/Prefix per al text compartit al Markor. Segueix les regles SimpleDateFormat d\'Android.\n\nUtilitzeu el marcador de posició {{text}} per posicionar el text compartit. Si no s\'especifica, s\'afegeix el text compartit i el format s\'utilitza com a prefix.</string>
     <string name="share_into_format">Comparteix en - Format</string>
+    <string name="attachment_folder_name">Nom de la carpeta adjunta</string>
+    <string name="attachment_folder_name_desc">Subcarpeta sota la carpeta actual on es desaran els fitxers adjunts. Si es deixa en blanc, els fitxers adjunts es desaran a la carpeta actual.</string>
     <string name="auto_format">Format automàtic</string>
     <string name="insert_snippet">Insereix fragment</string>
+    <string name="snippet_directory">Directori de fragments/plantilles</string>
     <string name="error_could_not_open_file">Error: no s\'ha pogut obrir el fitxer.</string>
     <string name="document_error_clip">S\'ha trobat un error: el text s\'ha copiat al porta-retalls.</string>
     <string name="wont_save_min_length">Els fitxers amb menys de %d caràcters no es desaran automàticament per evitar la pèrdua de dades.</string>
     <string name="advanced_filtering_help"><![CDATA[<small><a href="https://www.github.com/gsantner/markor/discussions/1940">Sintaxi de filtratge avançat</a></small>]]></string>
+    <string name="filter">Filtre</string>
 </resources>

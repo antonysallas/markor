@@ -1,6 +1,6 @@
 /*#######################################################
  *
- *   Maintained 2017-2023 by Gregor Santner <gsantner AT mailbox DOT org>
+ *   Maintained 2017-2024 by Gregor Santner <gsantner AT mailbox DOT org>
  *   License of this file: Apache 2.0
  *     https://www.apache.org/licenses/LICENSE-2.0
  *
@@ -29,7 +29,7 @@ public class OpenEditorActivity extends MarkorBaseActivity {
     protected void openEditorForFile(final File file, final Integer line) {
         final Intent openIntent = new Intent(getApplicationContext(), OpenFromShortcutOrWidgetActivity.class)
                 .setAction(Intent.ACTION_EDIT)
-                .putExtra(Document.EXTRA_PATH, file);
+                .putExtra(Document.EXTRA_FILE, file);
 
         if (line != null) {
             openIntent.putExtra(Document.EXTRA_FILE_LINE_NUMBER, line);
